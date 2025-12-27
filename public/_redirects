@@ -1,1 +1,5 @@
+# Prerender.io proxy for bots
+/*    https://service.prerender.io/https://drivetaxi.co.uk/:splat   200!   User-Agent: *bot*,*crawler*,*spider*,*Prerender*
+
+# SPA fallback for regular users
 /*    /index.html   200
