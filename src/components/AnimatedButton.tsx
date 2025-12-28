@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ReactNode } from 'react';
-import { buttonHover, buttonTap } from '../lib/animations';
+import { buttonHover, buttonHoverAdvanced, buttonTap } from '../lib/animations';
 
 interface AnimatedButtonProps {
   children: ReactNode;
@@ -13,6 +13,7 @@ interface AnimatedButtonProps {
   glowColor?: string;
   type?: 'button' | 'submit';
   disabled?: boolean;
+  animationVariant?: 'basic' | 'advanced' | 'pulse' | 'bounce';
 }
 
 export default function AnimatedButton({
@@ -24,7 +25,8 @@ export default function AnimatedButton({
   className = '',
   glowColor,
   type = 'button',
-  disabled = false
+  disabled = false,
+  animationVariant = 'advanced'
 }: AnimatedButtonProps) {
   const baseClasses = 'px-8 py-4 rounded-lg font-semibold text-lg transition-colors inline-flex items-center justify-center';
 
@@ -40,14 +42,36 @@ export default function AnimatedButton({
 
   const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${className}`;
 
+  const hoverAnimations = {
+    basic: { ...buttonHover, ...glowEffect },
+    advanced: { ...buttonHoverAdvanced, ...glowEffect },
+    pulse: { 
+      scale: 1.08, 
+      y: -3, 
+      boxShadow: `0 20px 40px ${glowColor || 'rgba(250, 204, 21, 0.3)'}`,
+      transition: { duration: 0.3 }
+    },
+    bounce: { 
+      scale: 1.1, 
+      y: -5, 
+      boxShadow: `0 25px 50px ${glowColor || 'rgba(250, 204, 21, 0.4)'}`,
+      transition: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }
+    }
+  };
+
   const animationProps = {
-    whileHover: disabled ? {} : { ...buttonHover, ...glowEffect },
-    whileTap: disabled ? {} : buttonTap
+    whileHover: disabled ? {} : hoverAnimations[animationVariant],
+    whileTap: disabled ? {} : { ...buttonTap, scale: 0.95 }
   };
 
   if (to) {
     return (
-      <motion.div {...animationProps}>
+      <motion.div 
+        {...animationProps}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+      >
         <Link to={to} className={combinedClasses}>
           {children}
         </Link>
@@ -61,6 +85,9 @@ export default function AnimatedButton({
         href={href}
         className={combinedClasses}
         {...animationProps}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
       >
         {children}
       </motion.a>
@@ -74,6 +101,9 @@ export default function AnimatedButton({
       disabled={disabled}
       className={`${combinedClasses} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       {...animationProps}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
     >
       {children}
     </motion.button>
