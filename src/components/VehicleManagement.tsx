@@ -25,6 +25,10 @@ export default function VehicleManagement() {
   }, []);
 
   const fetchVehicles = async () => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -42,6 +46,7 @@ export default function VehicleManagement() {
   };
 
   const handleDelete = async (id: string) => {
+    if (!supabase) return;
     if (!confirm('Are you sure you want to delete this vehicle?')) return;
 
     try {
@@ -67,6 +72,15 @@ export default function VehicleManagement() {
     setEditingVehicle(null);
     setShowModal(true);
   };
+
+  if (!supabase) {
+    return (
+      <div className="bg-white rounded-lg shadow-lg p-6 text-center">
+        <h2 className="text-2xl font-bold mb-4">Vehicle Management</h2>
+        <p className="text-gray-500">Supabase is not configured. Please check your environment variables.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
@@ -216,6 +230,7 @@ function VehicleModal({ vehicle, onClose, onSuccess }: {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabase) return;
     setSaving(true);
 
     try {

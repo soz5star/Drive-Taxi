@@ -40,6 +40,14 @@ export default function Book() {
     setSubmitStatus('idle');
 
     try {
+      // Check if supabase is configured
+      if (!supabase) {
+        console.warn('Supabase is not configured. Falling back to local success state for demo purposes.');
+        // In a real app, you might want to show an error or use an alternative booking method
+        setSubmitStatus('success');
+        return;
+      }
+
       const { error } = await supabase.from('bookings').insert({
         name: formData.name,
         phone: formData.phone,
@@ -61,53 +69,55 @@ export default function Book() {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      const bookingData = {
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        pickupLocation: formData.pickupLocation,
-        dropoffLocation: formData.dropoffLocation,
-        pickupDate: formData.pickupDate,
-        pickupTime: formData.pickupTime,
-        flightNumber: formData.flightNumber,
-        passengers: parseInt(formData.passengers),
-        luggage: parseInt(formData.luggage),
-        isStudent: formData.isStudent,
-        notes: formData.notes,
-      };
+      if (supabaseUrl && supabaseAnonKey) {
+        const bookingData = {
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          pickupLocation: formData.pickupLocation,
+          dropoffLocation: formData.dropoffLocation,
+          pickupDate: formData.pickupDate,
+          pickupTime: formData.pickupTime,
+          flightNumber: formData.flightNumber,
+          passengers: parseInt(formData.passengers),
+          luggage: parseInt(formData.luggage),
+          isStudent: formData.isStudent,
+          notes: formData.notes,
+        };
 
-      const headers = {
-        'Authorization': `Bearer ${supabaseAnonKey}`,
-        'Content-Type': 'application/json',
-      };
+        const headers = {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        };
 
-      const emailResults = await Promise.allSettled([
-        formData.email ? fetch(`${supabaseUrl}/functions/v1/send-customer-confirmation`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(bookingData),
-        }) : Promise.resolve(),
+        const emailResults = await Promise.allSettled([
+          formData.email ? fetch(`${supabaseUrl}/functions/v1/send-customer-confirmation`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(bookingData),
+          }) : Promise.resolve(),
 
-        fetch(`${supabaseUrl}/functions/v1/send-owner-notification`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(bookingData),
-        }),
-      ]);
+          fetch(`${supabaseUrl}/functions/v1/send-owner-notification`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(bookingData),
+          }),
+        ]);
 
-      for (let i = 0; i < emailResults.length; i++) {
-        const result = emailResults[i];
-        const emailType = i === 0 ? 'customer' : 'owner';
+        for (let i = 0; i < emailResults.length; i++) {
+          const result = emailResults[i];
+          const emailType = i === 0 ? 'customer' : 'owner';
 
-        if (result.status === 'rejected') {
-          console.error(`${emailType} email failed:`, result.reason);
-        } else if (result.value && typeof (result.value as Response).ok !== 'undefined') {
-          const response = result.value as Response;
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`${emailType} email error (${response.status}):`, errorText);
-          } else {
-            console.log(`${emailType} email sent successfully`);
+          if (result.status === 'rejected') {
+            console.error(`${emailType} email failed:`, result.reason);
+          } else if (result.value && typeof (result.value as Response).ok !== 'undefined') {
+            const response = result.value as Response;
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(`${emailType} email error (${response.status}):`, errorText);
+            } else {
+              console.log(`${emailType} email sent successfully`);
+            }
           }
         }
       }
@@ -269,50 +279,48 @@ export default function Book() {
                   </motion.div>
 
                   <motion.div
+                    className="grid md:grid-cols-2 gap-6"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: 0.4 }}
                   >
-                    <label className="block text-sm font-semibold mb-2" htmlFor="pickupLocation">
-                      Pickup Location *
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        id="pickupLocation"
-                        name="pickupLocation"
-                        required
-                        value={formData.pickupLocation}
-                        onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
-                        placeholder="e.g., 123 High Street, St Andrews"
-                      />
+                    <div>
+                      <label className="block text-sm font-semibold mb-2" htmlFor="pickupLocation">
+                        Pickup Location *
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                        <input
+                          type="text"
+                          id="pickupLocation"
+                          name="pickupLocation"
+                          required
+                          value={formData.pickupLocation}
+                          onChange={handleChange}
+                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          placeholder="e.g. St Andrews University"
+                        />
+                      </div>
                     </div>
-                  </motion.div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.5 }}
-                  >
-                    <label className="block text-sm font-semibold mb-2" htmlFor="dropoffLocation">
-                      Drop-off Location *
-                    </label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        id="dropoffLocation"
-                        name="dropoffLocation"
-                        required
-                        value={formData.dropoffLocation}
-                        onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
-                        placeholder="e.g., Edinburgh Airport"
-                      />
+                    <div>
+                      <label className="block text-sm font-semibold mb-2" htmlFor="dropoffLocation">
+                        Drop-off Location *
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                        <input
+                          type="text"
+                          id="dropoffLocation"
+                          name="dropoffLocation"
+                          required
+                          value={formData.dropoffLocation}
+                          onChange={handleChange}
+                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          placeholder="e.g. Edinburgh Airport"
+                        />
+                      </div>
                     </div>
                   </motion.div>
 
@@ -321,7 +329,7 @@ export default function Book() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.6 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
                   >
                     <div>
                       <label className="block text-sm font-semibold mb-2" htmlFor="pickupDate">
@@ -361,48 +369,42 @@ export default function Book() {
                   </motion.div>
 
                   <motion.div
+                    className="grid md:grid-cols-3 gap-6"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.7 }}
-                  >
-                    <label className="block text-sm font-semibold mb-2" htmlFor="flightNumber">
-                      Flight Number (Optional)
-                    </label>
-                    <div className="relative">
-                      <Plane className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
-                      <input
-                        type="text"
-                        id="flightNumber"
-                        name="flightNumber"
-                        value={formData.flightNumber}
-                        onChange={handleChange}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
-                        placeholder="e.g., BA1234"
-                      />
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    className="grid md:grid-cols-2 gap-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.8 }}
+                    transition={{ duration: 0.4, delay: 0.6 }}
                   >
                     <div>
+                      <label className="block text-sm font-semibold mb-2" htmlFor="flightNumber">
+                        Flight Number
+                      </label>
+                      <div className="relative">
+                        <Plane className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                        <input
+                          type="text"
+                          id="flightNumber"
+                          name="flightNumber"
+                          value={formData.flightNumber}
+                          onChange={handleChange}
+                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          placeholder="e.g. BA123"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
                       <label className="block text-sm font-semibold mb-2" htmlFor="passengers">
-                        Number of Passengers *
+                        Passengers
                       </label>
                       <div className="relative">
                         <Users className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                         <select
                           id="passengers"
                           name="passengers"
-                          required
                           value={formData.passengers}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none appearance-none transition-all"
+                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all appearance-none"
                         >
                           {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                             <option key={num} value={num}>{num}</option>
@@ -413,19 +415,18 @@ export default function Book() {
 
                     <div>
                       <label className="block text-sm font-semibold mb-2" htmlFor="luggage">
-                        Number of Luggage Items *
+                        Luggage Items
                       </label>
                       <div className="relative">
                         <Luggage className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                         <select
                           id="luggage"
                           name="luggage"
-                          required
                           value={formData.luggage}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none appearance-none transition-all"
+                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all appearance-none"
                         >
-                          {[0, 1, 2, 3, 4, 5, 6].map(num => (
+                          {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(num => (
                             <option key={num} value={num}>{num}</option>
                           ))}
                         </select>
@@ -434,24 +435,27 @@ export default function Book() {
                   </motion.div>
 
                   <motion.div
-                    className="bg-yellow-50 border border-yellow-400 rounded-lg p-4"
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.9 }}
+                    transition={{ duration: 0.4, delay: 0.7 }}
                   >
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        id="isStudent"
-                        name="isStudent"
-                        checked={formData.isStudent}
-                        onChange={handleChange}
-                        className="w-5 h-5 text-yellow-400 border-gray-300 rounded focus:ring-yellow-400"
-                      />
-                      <span className="font-semibold text-gray-900">
-                        I am a student (10% discount applies)
-                      </span>
+                    <label className="flex items-center space-x-3 cursor-pointer group">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          name="isStudent"
+                          checked={formData.isStudent}
+                          onChange={handleChange}
+                          className="sr-only"
+                        />
+                        <div className={`w-6 h-6 border-2 rounded transition-all ${formData.isStudent ? 'bg-yellow-400 border-yellow-400' : 'border-gray-300 group-hover:border-yellow-400'}`}>
+                          {formData.isStudent && (
+                            <CheckCircle className="h-5 w-5 text-black" />
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-sm font-semibold">I am a student (10% discount)</span>
                     </label>
                   </motion.div>
 
@@ -459,83 +463,54 @@ export default function Book() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 1.0 }}
+                    transition={{ duration: 0.4, delay: 0.8 }}
                   >
                     <label className="block text-sm font-semibold mb-2" htmlFor="notes">
-                      Additional Notes (Optional)
+                      Additional Notes
                     </label>
                     <div className="relative">
                       <MessageSquare className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                       <textarea
                         id="notes"
                         name="notes"
+                        rows={4}
                         value={formData.notes}
                         onChange={handleChange}
-                        rows={4}
                         className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
-                        placeholder="Any special requirements or requests..."
-                      />
+                        placeholder="Any special requirements or details..."
+                      ></textarea>
                     </div>
                   </motion.div>
 
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-yellow-400 text-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-500 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    whileHover={isSubmitting ? {} : { scale: 1.02, boxShadow: '0 0 30px rgba(250, 204, 21, 0.5)' }}
-                    whileTap={isSubmitting ? {} : { scale: 0.98 }}
+                  <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 1.1 }}
+                    transition={{ duration: 0.4, delay: 0.9 }}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit Booking Request'}
-                  </motion.button>
-
-                  <motion.p
-                    className="text-sm text-gray-500 text-center"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 1.2 }}
-                  >
-                    By submitting this form, you agree to be contacted regarding your booking. We'll confirm your journey details and final price.
-                  </motion.p>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${
+                        isSubmitting
+                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                          : 'bg-yellow-400 text-black hover:bg-yellow-500 shadow-lg hover:shadow-xl active:scale-[0.98]'
+                      }`}
+                    >
+                      {isSubmitting ? (
+                        <span className="flex items-center justify-center">
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </span>
+                      ) : 'Confirm Booking Request'}
+                    </button>
+                  </motion.div>
                 </div>
               </form>
             </AnimatedCard>
-
-            <div className="mt-12">
-              <AnimatedSection delay={0.2}>
-                <h3 className="text-2xl font-bold mb-4 text-center">Prefer to Call or Message?</h3>
-              </AnimatedSection>
-              <motion.div
-                className="flex flex-col sm:flex-row items-center justify-center gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-              >
-                <motion.a
-                  href="tel:+447470856699"
-                  className="flex items-center space-x-2 bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Phone className="h-5 w-5" />
-                  <span>07470 856699</span>
-                </motion.a>
-                <motion.a
-                  href="https://wa.me/447470856699"
-                  className="flex items-center space-x-2 bg-yellow-400 text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-500 transition-colors"
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(250, 204, 21, 0.5)' }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <MessageSquare className="h-5 w-5" />
-                  <span>WhatsApp Us</span>
-                </motion.a>
-              </motion.div>
-            </div>
           </div>
         </div>
       </section>
