@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Phone, MessageCircle, Clock, Shield, MapPin, GraduationCap, Plane, Award, Star } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/AnimatedButton';
@@ -6,8 +6,14 @@ import AnimatedCard from '../components/AnimatedCard';
 import TrustBadges from '../components/TrustBadges';
 import Testimonials from '../components/Testimonials';
 import HowItWorks from '../components/HowItWorks';
+import ParticleBackground from '../components/ParticleBackground';
+import AnimatedBackground3D from '../components/AnimatedBackground3D';
 
 export default function Home() {
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+
   const services = [
     {
       icon: Plane,
@@ -42,30 +48,55 @@ export default function Home() {
   return (
     <div>
       <section className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white py-24 md:py-32 overflow-hidden">
+        <AnimatedBackground3D />
+        <ParticleBackground />
+
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(250,204,21,0.1),transparent_50%)]" />
         </div>
 
-        <div className="container mx-auto px-4 relative z-10">
+        <motion.div
+          className="container mx-auto px-4 relative z-10"
+          style={{ y: heroY, opacity: heroOpacity }}
+        >
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               className="inline-block bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-bold mb-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, scale: 0.9, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{
+                duration: 0.6,
+                type: 'spring',
+                stiffness: 200,
+                damping: 15
+              }}
+              whileHover={{ scale: 1.05, rotate: 2 }}
             >
               Serving St Andrews & Fife
             </motion.div>
 
             <motion.h1
               className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.2,
+                type: 'spring',
+                stiffness: 100,
+                damping: 12
+              }}
             >
               Reliable Airport Transfers
               <br />
-              <span className="text-yellow-400">From St Andrews</span>
+              <motion.span
+                className="text-yellow-400"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5, duration: 0.7 }}
+              >
+                From St Andrews
+              </motion.span>
             </motion.h1>
 
             <motion.p
@@ -114,7 +145,7 @@ export default function Home() {
               <span>WhatsApp for Quick Booking</span>
             </motion.a>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <section className="py-16 bg-gray-50">
@@ -140,16 +171,21 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {services.map((service, index) => (
-              <AnimatedCard key={index} delay={index * 0.1} className="p-8 relative overflow-hidden border border-gray-200 shadow-sm">
+              <AnimatedCard key={index} delay={index * 0.1} hoverEffect="tilt" className="p-8 relative overflow-hidden border border-gray-200 shadow-sm">
                 {service.popular && (
-                  <div className="absolute top-4 right-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold">
+                  <motion.div
+                    className="absolute top-4 right-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-bold"
+                    initial={{ scale: 0, rotate: -12 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ delay: 0.5, type: 'spring', stiffness: 300 }}
+                  >
                     Most Popular
-                  </div>
+                  </motion.div>
                 )}
                 <motion.div
                   className="bg-yellow-400 w-14 h-14 rounded-lg flex items-center justify-center mb-4"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ duration: 0.3 }}
+                  whileHover={{ scale: 1.2, rotate: 360 }}
+                  transition={{ duration: 0.6, type: 'spring', stiffness: 200 }}
                 >
                   <service.icon className="h-7 w-7 text-black" />
                 </motion.div>
@@ -195,11 +231,22 @@ export default function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-16">
             {features.map((feature, index) => (
-              <AnimatedCard key={index} delay={index * 0.1} className="p-6 text-center bg-gray-50 border border-gray-100">
+              <AnimatedCard key={index} delay={index * 0.1} hoverEffect="glow" className="p-6 text-center bg-gray-50 border border-gray-100">
                 <motion.div
                   className="bg-yellow-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ scale: 1.1, rotate: 360 }}
-                  transition={{ duration: 0.5 }}
+                  whileHover={{ scale: 1.2, rotate: 360 }}
+                  animate={{
+                    y: [0, -5, 0],
+                  }}
+                  transition={{
+                    whileHover: { duration: 0.6, type: 'spring', stiffness: 200 },
+                    y: {
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      delay: index * 0.2
+                    }
+                  }}
                 >
                   <feature.icon className="h-8 w-8 text-black" />
                 </motion.div>
@@ -217,14 +264,51 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-yellow-400">
-        <div className="container mx-auto px-4">
+      <section className="py-16 bg-yellow-400 relative overflow-hidden">
+        <motion.div
+          className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/30 rounded-full blur-3xl"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        <motion.div
+          className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-500/30 rounded-full blur-3xl"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, 30, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+
+        <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection>
             <div className="max-w-4xl mx-auto text-center">
               <motion.div
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                transition={{ duration: 0.3 }}
+                whileHover={{ scale: 1.1, rotate: [0, -10, 10, -10, 0] }}
                 className="inline-block mb-4"
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  whileHover: { duration: 0.5 },
+                  y: {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut'
+                  }
+                }}
               >
                 <GraduationCap className="h-16 w-16 text-black mx-auto" />
               </motion.div>
@@ -242,8 +326,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-black text-white">
-        <div className="container mx-auto px-4">
+      <section className="py-20 bg-black text-white relative overflow-hidden">
+        <ParticleBackground />
+        <AnimatedBackground3D />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <AnimatedSection>
               <h2 className="text-4xl md:text-5xl font-bold mb-6">

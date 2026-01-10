@@ -4,6 +4,8 @@ import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, Phone, C
 import { supabase } from '../lib/supabase';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
+import ParticleBackground from '../components/ParticleBackground';
+import AnimatedBackground3D from '../components/AnimatedBackground3D';
 
 export default function Book() {
   const [formData, setFormData] = useState({
@@ -147,8 +149,10 @@ export default function Book() {
 
   return (
     <div>
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24">
-        <div className="container mx-auto px-4">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+        <ParticleBackground />
+        <AnimatedBackground3D />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h1
               className="text-4xl md:text-5xl font-bold mb-6"
