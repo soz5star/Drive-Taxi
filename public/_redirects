@@ -1,6 +1,4 @@
 /sitemap.xml /sitemap.xml 200!
 /robots.txt /robots.txt 200!
 
-/*  https://service.prerender.io/uoFHMvheG8HhvTJ4PPOF/https://drivetaxi.co.uk/:splat  200!  Conditions: headers=User-Agent=~*bot|crawler|spider|crawling|lighthouse|googlebot|bingbot|baiduspider|yandex|yahoo|exabot|duckduckbot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegram|slackbot|sitemapparser|AdsBot|Google-InspectionTool Role=bot
-
 /*  /index.html  200
