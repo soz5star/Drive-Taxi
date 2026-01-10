@@ -3,6 +3,8 @@ import { Plane, Clock, Shield, MapPin, CheckCircle } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';
+import ParticleBackground from '../components/ParticleBackground';
+import AnimatedBackground3D from '../components/AnimatedBackground3D';
 
 export default function AirportTransfers() {
   const airports = [
@@ -37,8 +39,10 @@ export default function AirportTransfers() {
 
   return (
     <div>
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24">
-        <div className="container mx-auto px-4">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+        <ParticleBackground />
+        <AnimatedBackground3D />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <motion.h1
               className="text-4xl md:text-5xl font-bold mb-6"
@@ -184,8 +188,10 @@ export default function AirportTransfers() {
         </div>
       </section>
 
-      <section className="py-16 bg-black text-white">
-        <div className="container mx-auto px-4">
+      <section className="py-16 bg-black text-white relative overflow-hidden">
+        <ParticleBackground />
+        <AnimatedBackground3D />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <AnimatedSection>
               <h2 className="text-3xl font-bold mb-6">

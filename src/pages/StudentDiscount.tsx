@@ -3,6 +3,8 @@ import { GraduationCap, BadgePercent, CheckCircle, Plane, BookOpen } from 'lucid
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';
+import ParticleBackground from '../components/ParticleBackground';
+import AnimatedBackground3D from '../components/AnimatedBackground3D';
 
 export default function StudentDiscount() {
   const benefits = [
@@ -23,8 +25,10 @@ export default function StudentDiscount() {
 
   return (
     <div>
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24">
-        <div className="container mx-auto px-4">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+        <ParticleBackground />
+        <AnimatedBackground3D />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <motion.div
               className="inline-flex items-center justify-center space-x-3 bg-yellow-400 text-black px-6 py-3 rounded-full mb-6"
@@ -198,8 +202,10 @@ export default function StudentDiscount() {
         </div>
       </section>
 
-      <section className="py-16 bg-black text-white">
-        <div className="container mx-auto px-4">
+      <section className="py-16 bg-black text-white relative overflow-hidden">
+        <ParticleBackground />
+        <AnimatedBackground3D />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
