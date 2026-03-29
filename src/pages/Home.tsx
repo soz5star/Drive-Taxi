@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Phone, MessageCircle, Clock, Shield, MapPin, GraduationCap, Plane, Award, Star } from 'lucide-react';
+import { Phone, MessageCircle, Clock, Shield, MapPin, GraduationCap, Plane, Award, Star, Users, Heart, CheckCircle } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/AnimatedButton';
 import AnimatedCard from '../components/AnimatedCard';
@@ -18,23 +18,27 @@ export default function Home() {
     {
       icon: Plane,
       title: 'Airport Transfers',
-      description: 'Edinburgh, Glasgow & Dundee airports with flight tracking and meet & greet',
-      popular: true
+      description: 'Edinburgh, Glasgow & Dundee airports with flight tracking and meet & greet. We monitor your flight so you never wait alone.',
+      popular: true,
+      link: '/airport-transfers'
     },
     {
       icon: Clock,
       title: 'Early Morning Pickups',
-      description: 'Catch those dawn flights with confidence. We specialize in early departures'
+      description: 'Catch those dawn flights with confidence. We specialize in early departures — no matter how early, we\'ll be there.',
+      link: '/book'
     },
     {
       icon: MapPin,
       title: 'Long-Distance Travel',
-      description: 'Comfortable journeys across Scotland with experienced drivers'
+      description: 'Comfortable journeys across Scotland with experienced drivers who know every road and shortcut.',
+      link: '/pricing'
     },
     {
       icon: GraduationCap,
       title: 'Student Discount',
-      description: 'Save 10% on all journeys with valid student ID'
+      description: 'Save 10% on all journeys with valid student ID. Perfect for term-time travel and trips home.',
+      link: '/student-discount'
     }
   ];
 
@@ -90,7 +94,7 @@ export default function Home() {
               Reliable Airport Transfers
               <br />
               <motion.span
-                className="text-yellow-400"
+                className="text-gradient-shimmer"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5, duration: 0.7 }}
@@ -156,6 +160,46 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats Counter Section */}
+      <section className="py-14 bg-black text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-30" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+            {[
+              { icon: Star, value: '5.0', label: 'Customer Rating' },
+              { icon: Users, value: '1000+', label: 'Happy Passengers' },
+              { icon: Clock, value: '24/7', label: 'Advance Booking' },
+              { icon: Award, value: '10+', label: 'Years of Service' }
+            ].map((stat, index) => (
+              <AnimatedSection key={index} delay={index * 0.1}>
+                <motion.div
+                  className="text-center"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    className="bg-yellow-400 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-3"
+                    animate={{ y: [0, -4, 0] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: index * 0.3 }}
+                  >
+                    <stat.icon className="h-6 w-6 text-black" />
+                  </motion.div>
+                  <motion.p
+                    className="text-3xl md:text-4xl font-bold text-yellow-400 mb-1"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + index * 0.1, type: 'spring', stiffness: 200 }}
+                  >
+                    {stat.value}
+                  </motion.p>
+                  <p className="text-gray-400 text-sm">{stat.label}</p>
+                </motion.div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -164,7 +208,7 @@ export default function Home() {
                 Our Services
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Professional transport solutions across Fife and Scotland
+                Professional transport solutions across Fife and Scotland — tailored to get you where you need to be, comfortably and on time
               </p>
             </AnimatedSection>
           </div>
@@ -190,7 +234,15 @@ export default function Home() {
                   <service.icon className="h-7 w-7 text-black" />
                 </motion.div>
                 <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-                <p className="text-gray-600 text-lg">{service.description}</p>
+                <p className="text-gray-600 text-lg mb-4">{service.description}</p>
+                <motion.a
+                  href={service.link}
+                  className="inline-flex items-center text-yellow-600 font-semibold text-sm hover:text-yellow-700 transition-colors"
+                  whileHover={{ x: 5 }}
+                >
+                  Learn more
+                  <CheckCircle className="h-4 w-4 ml-1" />
+                </motion.a>
               </AnimatedCard>
             ))}
           </div>
@@ -223,8 +275,8 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
                 Why Choose Drive Taxi?
               </h2>
-              <p className="text-xl text-gray-600">
-                Professional airport transfers across St Andrews and Fife
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                We're a locally owned taxi service rooted in St Andrews and Fife. Our drivers live here, know every route, and treat every passenger like family.
               </p>
             </AnimatedSection>
           </div>
@@ -255,10 +307,27 @@ export default function Home() {
             ))}
           </div>
 
-          <AnimatedSection delay={0.4}>
+          {/* Local trust blurb */}
+          <AnimatedSection delay={0.2}>
+            <div className="max-w-3xl mx-auto text-center mb-16 bg-gray-50 rounded-2xl p-8 border border-gray-100">
+              <motion.div
+                className="inline-block mb-4"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <Heart className="h-8 w-8 text-yellow-500 mx-auto" />
+              </motion.div>
+              <h3 className="text-2xl font-bold mb-3">Proudly Serving St Andrews Since Day One</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Whether you're a student heading home for the holidays, a golfer visiting the Old Course, or a local catching an early flight from Edinburgh, we understand the needs of this community. Our commitment is simple: get you there safely, comfortably, and always on time.
+              </p>
+            </div>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.3}>
             <div className="max-w-6xl mx-auto">
-              <h3 className="text-3xl font-bold text-center mb-8">Our Commitment</h3>
-              <Testimonials />
+              <h3 className="text-3xl font-bold text-center mb-8">What Our Passengers Say</h3>
+              <Testimonials variant="carousel" />
             </div>
           </AnimatedSection>
         </div>
@@ -315,8 +384,11 @@ export default function Home() {
               <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
                 Students Save 10% on All Journeys
               </h2>
-              <p className="text-xl text-black/80 mb-6">
+              <p className="text-xl text-black/80 mb-2">
                 Perfect for airport transfers, term travel, and trips home
+              </p>
+              <p className="text-black/60 mb-6">
+                Just show your valid student ID and the discount is applied automatically. No codes, no fuss.
               </p>
               <AnimatedButton to="/student-discount" variant="secondary">
                 Learn More About Student Discounts
@@ -335,8 +407,11 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Ready to Book Your Journey?
               </h2>
-              <p className="text-xl text-gray-300 mb-8">
-                Get your free quote in minutes. No obligation, quick response guaranteed
+              <p className="text-xl text-gray-300 mb-4">
+                Get your free quote in minutes. No obligation, quick response guaranteed.
+              </p>
+              <p className="text-gray-400 mb-8">
+                Whether it's a 4am airport run or a long-distance trip across Scotland, we've got you covered.
               </p>
             </AnimatedSection>
 
