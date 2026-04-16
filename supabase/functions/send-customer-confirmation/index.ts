@@ -289,14 +289,14 @@ Deno.serve(async (req: Request) => {
         <div class="email-wrapper">
           <div class="header">
             <div class="checkmark">✓</div>
-            <h1>Booking Confirmed!</h1>
+            <h1>Booking Request Received!</h1>
             <p>Reference: #${booking.phone.slice(-4)}-${new Date().getTime().toString().slice(-4)}</p>
           </div>
 
           <div class="content">
             <div class="greeting">Hi ${booking.name},</div>
             <div class="message">
-              Thank you for choosing Drive Taxi. We've received your booking request and our team will contact you  to confirm all details and provide your final quote.
+              Thank you for choosing Drive Taxi. We've received your booking request. Please note this is an estimated price based on the details provided. Our team will contact you to confirm all details and provide your final quote.
             </div>
 
             <div class="section-title">Your Journey</div>
