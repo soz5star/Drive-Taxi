@@ -38,11 +38,7 @@ const faqData: FAQItem[] = [
     question: 'Where will I meet my driver at the airport?',
     answer: 'Your driver will meet you in the arrivals hall with a name board. For Edinburgh Airport, this is usually near the main exit. For Glasgow and Dundee airports, we\'ll confirm the specific meeting point when you book. We also offer a meet-and-greet service where the driver will help with luggage.'
   },
-  {
-    category: 'Airport Transfers',
-    question: 'How much luggage can I bring?',
-    answer: 'Our standard vehicle comfortably fits 3-4 large suitcases plus hand luggage. If you have excess luggage or large items (golf bags, skis, etc.), please let us know when booking so we can arrange appropriate transport.'
-  },
+
   {
     category: 'Services',
     question: 'Can I bring pets?',

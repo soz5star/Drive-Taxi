@@ -4,12 +4,13 @@ import { motion } from 'framer-motion';
 import {
   LogOut, Trash2, Phone, Mail, MapPin, Calendar, Clock, Users, Luggage,
   Plane, MessageSquare, GraduationCap, RefreshCw, Download, Search, Filter,
-  DollarSign, TrendingUp, Car, User, Package
+  DollarSign, TrendingUp, Car, User, Package, CheckCircle
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import DriverManagement from '../components/DriverManagement';
 import VehicleManagement from '../components/VehicleManagement';
+import SMSManager from '../components/SMSManager';
 
 interface Booking {
   id: string;
@@ -46,7 +47,7 @@ interface Vehicle {
   status: string;
 }
 
-type Tab = 'bookings' | 'drivers' | 'vehicles' | 'analytics';
+type Tab = 'bookings' | 'drivers' | 'vehicles' | 'analytics' | 'sms';
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
@@ -304,7 +305,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Revenue"
-            value={`$${totalRevenue.toFixed(2)}`}
+            value={`£${totalRevenue.toFixed(2)}`}
             icon={DollarSign}
             color="bg-green-500"
           />
@@ -327,6 +328,9 @@ export default function AdminDashboard() {
             color="bg-black"
           />
         </div>
+
+        {/* Today's Schedule */}
+        <TodaySchedule bookings={bookings} onSelectBooking={setSelectedBooking} />
 
         <div className="bg-white rounded-lg shadow-lg mb-6">
           <div className="border-b border-gray-200">
@@ -354,6 +358,12 @@ export default function AdminDashboard() {
                 onClick={() => setActiveTab('analytics')}
                 icon={TrendingUp}
                 label="Analytics"
+              />
+              <TabButton
+                active={activeTab === 'sms'}
+                onClick={() => setActiveTab('sms')}
+                icon={MessageSquare}
+                label="SMS"
               />
             </div>
           </div>
@@ -441,18 +451,45 @@ export default function AdminDashboard() {
                               <StatusBadge status={booking.status} />
                             </td>
                             <td className="px-4 py-4 font-bold">
-                              {booking.price ? `$${booking.price.toFixed(2)}` : '-'}
+                              {booking.price ? `£${booking.price.toFixed(2)}` : '-'}
                             </td>
                             <td className="px-4 py-4">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDelete(booking.id);
-                                }}
-                                className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
-                              >
-                                <Trash2 className="w-5 h-5" />
-                              </button>
+                              <div className="flex items-center space-x-1">
+                                {booking.status === 'pending' && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updateBookingStatus(booking.id, 'confirmed');
+                                    }}
+                                    className="text-blue-500 hover:text-blue-700 p-2 rounded-full hover:bg-blue-50 transition-colors"
+                                    title="Confirm Booking"
+                                  >
+                                    <CheckCircle className="w-5 h-5" />
+                                  </button>
+                                )}
+                                {booking.status === 'confirmed' && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updateBookingStatus(booking.id, 'completed');
+                                    }}
+                                    className="text-green-500 hover:text-green-700 p-2 rounded-full hover:bg-green-50 transition-colors"
+                                    title="Mark Complete"
+                                  >
+                                    <TrendingUp className="w-5 h-5" />
+                                  </button>
+                                )}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDelete(booking.id);
+                                  }}
+                                  className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                                  title="Delete"
+                                >
+                                  <Trash2 className="w-5 h-5" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -466,6 +503,7 @@ export default function AdminDashboard() {
             {activeTab === 'drivers' && <DriverManagement />}
             {activeTab === 'vehicles' && <VehicleManagement />}
             {activeTab === 'analytics' && <AnalyticsView bookings={bookings} />}
+            {activeTab === 'sms' && <SMSManager />}
           </div>
         </div>
       </div>
@@ -595,9 +633,9 @@ export default function AdminDashboard() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">Price ($)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Price (£)</label>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
+                          <span className="absolute left-3 top-3.5 h-5 w-5 text-gray-400 font-bold">£</span>
                           <input
                             type="number"
                             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none font-bold"
@@ -755,18 +793,94 @@ function AnalyticsView({ bookings }: { bookings: Booking[] }) {
                   <div className="w-2 h-2 rounded-full bg-yellow-400" />
                   <span className="font-bold text-gray-600">{data.day}</span>
                 </div>
-                <span className="font-bold">${data.revenue.toFixed(2)}</span>
+                <span className="font-bold">£{data.revenue.toFixed(2)}</span>
               </div>
             ))}
             <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
               <span className="font-bold text-lg">Total Period Revenue</span>
               <span className="font-bold text-2xl text-green-600">
-                ${bookingsByDay.reduce((sum, d) => sum + d.revenue, 0).toFixed(2)}
+                £{bookingsByDay.reduce((sum, d) => sum + d.revenue, 0).toFixed(2)}
               </span>
             </div>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+// TodaySchedule Component - Shows today's bookings at a glance
+function TodaySchedule({ bookings, onSelectBooking }: { bookings: Booking[]; onSelectBooking: (booking: Booking) => void }) {
+  const today = new Date().toISOString().split('T')[0];
+  const todaysBookings = bookings.filter(b => b.pickup_date === today).sort((a, b) => a.pickup_time.localeCompare(b.pickup_time));
+  
+  const confirmedCount = todaysBookings.filter(b => b.status === 'confirmed').length;
+  const pendingCount = todaysBookings.filter(b => b.status === 'pending').length;
+  const completedCount = todaysBookings.filter(b => b.status === 'completed').length;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-xl shadow-lg p-6 mb-8"
+    >
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="bg-yellow-100 p-3 rounded-lg">
+            <Calendar className="w-6 h-6 text-yellow-600" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold">Today's Schedule</h2>
+            <p className="text-gray-500">{new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4 text-sm">
+          <span className="flex items-center space-x-1">
+            <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
+            <span>{pendingCount} Pending</span>
+          </span>
+          <span className="flex items-center space-x-1">
+            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+            <span>{confirmedCount} Confirmed</span>
+          </span>
+          <span className="flex items-center space-x-1">
+            <span className="w-3 h-3 rounded-full bg-green-500"></span>
+            <span>{completedCount} Completed</span>
+          </span>
+        </div>
+      </div>
+
+      {todaysBookings.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          <p>No bookings scheduled for today</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {todaysBookings.map((booking) => (
+            <motion.div
+              key={booking.id}
+              onClick={() => onSelectBooking(booking)}
+              className="flex items-center p-4 bg-gray-50 rounded-lg cursor-pointer hover:bg-yellow-50 transition-colors border-l-4"
+              style={{
+                borderLeftColor: booking.status === 'confirmed' ? '#3B82F6' : booking.status === 'completed' ? '#10B981' : booking.status === 'cancelled' ? '#EF4444' : '#FBBF24'
+              }}
+              whileHover={{ scale: 1.01 }}
+            >
+              <div className="flex-shrink-0 w-16 text-center">
+                <div className="text-lg font-bold">{booking.pickup_time}</div>
+              </div>
+              <div className="flex-grow px-4">
+                <div className="font-bold">{booking.name}</div>
+                <div className="text-sm text-gray-600">{booking.pickup_location} → {booking.dropoff_location}</div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <StatusBadge status={booking.status} />
+                {booking.price && <span className="font-bold">£{booking.price}</span>}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </motion.div>
   );
 }
