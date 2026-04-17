@@ -293,7 +293,7 @@ export default function Home() {
               <AnimatedSection>
                 <div className="relative rounded-2xl overflow-hidden shadow-xl">
                   <img
-                    src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&q=80"
+                    src="/ford-grand-cmax.jpg"
                     alt="Ford Grand C-Max taxi"
                     className="w-full h-72 object-cover"
                   />
@@ -374,7 +374,7 @@ export default function Home() {
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-3xl font-bold">What Customers Say</h3>
                 <a
-                  href="https://www.google.com/maps/search/Drive+Taxi+St+Andrews"
+                  href="https://share.google/ce77OEXm4TZtLSQLH"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
