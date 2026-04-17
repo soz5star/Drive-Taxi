@@ -104,21 +104,36 @@ export default function Book() {
             headers,
             body: JSON.stringify(bookingData),
           }),
+
+          // Send SMS confirmation to customer
+          formData.phone ? fetch(`${supabaseUrl}/functions/v1/send-sms-confirmation`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+              phone: formData.phone,
+              name: formData.name,
+              pickupLocation: formData.pickupLocation,
+              dropoffLocation: formData.dropoffLocation,
+              pickupDate: formData.pickupDate,
+              pickupTime: formData.pickupTime,
+            }),
+          }) : Promise.resolve(),
         ]);
 
+        const notificationTypes = ['customer email', 'owner email', 'customer SMS'];
         for (let i = 0; i < emailResults.length; i++) {
           const result = emailResults[i];
-          const emailType = i === 0 ? 'customer' : 'owner';
+          const notificationType = notificationTypes[i];
 
           if (result.status === 'rejected') {
-            console.error(`${emailType} email failed:`, result.reason);
+            console.error(`${notificationType} failed:`, result.reason);
           } else if (result.value && typeof (result.value as Response).ok !== 'undefined') {
             const response = result.value as Response;
             if (!response.ok) {
               const errorText = await response.text();
-              console.error(`${emailType} email error (${response.status}):`, errorText);
+              console.error(`${notificationType} error (${response.status}):`, errorText);
             } else {
-              console.log(`${emailType} email sent successfully`);
+              console.log(`${notificationType} sent successfully`);
             }
           }
         }
