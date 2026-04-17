@@ -4,13 +4,14 @@ import { motion } from 'framer-motion';
 import {
   LogOut, Trash2, Phone, Mail, MapPin, Calendar, Clock, Users, Luggage,
   Plane, MessageSquare, GraduationCap, RefreshCw, Download, Search, Filter,
-  DollarSign, TrendingUp, Car, User, Package, CheckCircle
+  DollarSign, TrendingUp, TrendingDown, Car, User, Package, CheckCircle
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import DriverManagement from '../components/DriverManagement';
 import VehicleManagement from '../components/VehicleManagement';
 import SMSManager from '../components/SMSManager';
+import ExpenseTracker from '../components/ExpenseTracker';
 
 interface Booking {
   id: string;
@@ -47,7 +48,7 @@ interface Vehicle {
   status: string;
 }
 
-type Tab = 'bookings' | 'drivers' | 'vehicles' | 'analytics' | 'sms';
+type Tab = 'bookings' | 'drivers' | 'vehicles' | 'analytics' | 'sms' | 'expenses';
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
@@ -365,6 +366,12 @@ export default function AdminDashboard() {
                 icon={MessageSquare}
                 label="SMS"
               />
+              <TabButton
+                active={activeTab === 'expenses'}
+                onClick={() => setActiveTab('expenses')}
+                icon={TrendingDown}
+                label="Expenses"
+              />
             </div>
           </div>
 
@@ -504,6 +511,7 @@ export default function AdminDashboard() {
             {activeTab === 'vehicles' && <VehicleManagement />}
             {activeTab === 'analytics' && <AnalyticsView bookings={bookings} />}
             {activeTab === 'sms' && <SMSManager />}
+            {activeTab === 'expenses' && <ExpenseTracker />}
           </div>
         </div>
       </div>
