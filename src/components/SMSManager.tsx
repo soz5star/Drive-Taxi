@@ -79,7 +79,6 @@ export default function SMSManager() {
       const result = await response.json();
       
       if (response.ok && result.success) {
-        // Add to logs
         const newLog: SMSLog = {
           id: Date.now().toString(),
           to: phoneNumber,
@@ -202,7 +201,7 @@ export default function SMSManager() {
             <div className="flex items-center justify-between pt-4">
               <div className="text-sm text-gray-600">
                 <Settings className="w-4 h-4 inline mr-1" />
-                Twilio integration required for live sending
+                ClickSend integration ready
               </div>
               <motion.button
                 onClick={handleSendSMS}
@@ -292,162 +291,110 @@ export default function SMSManager() {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    </motion.div>
-  )}
-
-  {/* Templates Tab */}
-  {activeTab === 'templates' && (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-4"
-    >
-      <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-        <p className="text-sm text-blue-800">
-          <strong>Auto SMS:</strong> When enabled, these messages are sent automatically based on booking status changes. 
-          Placeholders like {'{name}'}, {'{pickup}'}, {'{driver}'} will be replaced with actual booking data.
-        </p>
-      </div>
-
-      {templates.map(template => (
-        <div
-          key={template.id}
-          className={`p-4 rounded-lg border transition-colors ${
-            template.enabled ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-200 opacity-60'
-          }`}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex-grow">
-              <div className="flex items-center space-x-3 mb-2">
-                <h4 className="font-bold">{template.name}</h4>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  template.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {template.enabled ? 'Enabled' : 'Disabled'}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded font-mono">
-                {template.message}
-              </p>
-            </div>
-            <button
-              onClick={() => toggleTemplate(template.id)}
-              className={`ml-4 p-2 rounded-lg transition-colors ${
-                template.enabled 
-                  ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                  : 'bg-gray-200 text-gray-500 hover:bg-gray-300'
-              }`}
-            >
-              {template.enabled ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      ))}
-    </motion.div>
-  )}
-
-  {/* Logs Tab */}
-  {activeTab === 'logs' && (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden"
-    >
-      <table className="w-full">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Time</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">To</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Message</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {logs.map((log) => (
-            <tr key={log.id} className="hover:bg-gray-50">
-              <td className="px-4 py-3 text-sm text-gray-500">{log.timestamp}</td>
-              <td className="px-4 py-3 text-sm font-medium">{log.to}</td>
-              <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-xs">{log.message}</td>
-              <td className="px-4 py-3">
-                <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-bold ${
-                  log.status === 'sent' ? 'bg-green-100 text-green-700' : 
-                  log.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                }`}>
-                  {log.status === 'sent' ? <CheckCircle className="w-3 h-3" /> : 
-                   log.status === 'failed' ? <XCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                  <span className="capitalize">{log.status}</span>
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {logs.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <p>No SMS history yet</p>
-        </div>
+        </motion.div>
       )}
-    </motion.div>
-  )}
 
-  {activeTab === 'settings' && (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl border border-gray-200 p-6"
-    >
-      <h3 className="text-lg font-bold mb-6">SMS Settings</h3>
-      
-      <div className="space-y-6">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h4 className="font-semibold">Auto-SMS on Booking</h4>
-            <p className="text-sm text-gray-500">Automatically send SMS confirmation when customer books</p>
+      {/* Logs Tab */}
+      {activeTab === 'logs' && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl border border-gray-200 overflow-hidden"
+        >
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Time</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">To</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Message</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {logs.map((log) => (
+                <tr key={log.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm text-gray-500">{log.timestamp}</td>
+                  <td className="px-4 py-3 text-sm font-medium">{log.to}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 truncate max-w-xs">{log.message}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-bold ${
+                      log.status === 'sent' ? 'bg-green-100 text-green-700' : 
+                      log.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {log.status === 'sent' ? <CheckCircle className="w-3 h-3" /> : 
+                       log.status === 'failed' ? <XCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
+                      <span className="capitalize">{log.status}</span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {logs.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <p>No SMS history yet</p>
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === 'settings' && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-xl border border-gray-200 p-6"
+        >
+          <h3 className="text-lg font-bold mb-6">SMS Settings</h3>
+          
+          <div className="space-y-6">
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="font-semibold">Auto-SMS on Booking</h4>
+                <p className="text-sm text-gray-500">Automatically send SMS confirmation when customer books</p>
+              </div>
+              <button
+                onClick={() => setAutoSmsEnabled(!autoSmsEnabled)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  autoSmsEnabled ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    autoSmsEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+              <h4 className="font-semibold text-yellow-800 mb-2">ClickSend Setup</h4>
+              <p className="text-sm text-yellow-700 mb-4">
+                To enable SMS, add these secrets to your Supabase project:
+              </p>
+              <code className="block bg-black text-green-400 p-3 rounded text-xs font-mono">
+                npx supabase secrets set CLICKSEND_USERNAME=your_username<br/>
+                npx supabase secrets set CLICKSEND_API_KEY=your_api_key<br/>
+                npx supabase secrets set CLICKSEND_FROM=DriveTaxi
+              </code>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div>
+                <h4 className="font-semibold">Status</h4>
+                <p className="text-sm text-gray-500">
+                  {autoSmsEnabled ? 'Auto-SMS enabled' : 'Auto-SMS disabled'}
+                </p>
+              </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                autoSmsEnabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+              }`}>
+                {autoSmsEnabled ? 'ON' : 'OFF'}
+              </span>
+            </div>
           </div>
-          <button
-            onClick={() => setAutoSmsEnabled(!autoSmsEnabled)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              autoSmsEnabled ? 'bg-green-500' : 'bg-gray-300'
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                autoSmsEnabled ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
-
-        <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-          <h4 className="font-semibold text-yellow-800 mb-2">ClickSend Setup</h4>
-          <p className="text-sm text-yellow-700 mb-4">
-            To enable SMS, add these secrets to your Supabase project:
-          </p>
-          <code className="block bg-black text-green-400 p-3 rounded text-xs font-mono">
-            npx supabase secrets set CLICKSEND_USERNAME=your_username<br/>
-            npx supabase secrets set CLICKSEND_API_KEY=your_api_key<br/>
-            npx supabase secrets set CLICKSEND_FROM=DriveTaxi
-          </code>
-        </div>
-
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-          <div>
-            <h4 className="font-semibold">Status</h4>
-            <p className="text-sm text-gray-500">
-              {autoSmsEnabled ? 'Auto-SMS enabled' : 'Auto-SMS disabled'}
-            </p>
-          </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-            autoSmsEnabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-          }`}>
-            {autoSmsEnabled ? 'ON' : 'OFF'}
-          </span>
-        </div>
-      </div>
-    </motion.div>
-  )}
-</div>
-);
+        </motion.div>
+      )}
+    </div>
+  );
 }
