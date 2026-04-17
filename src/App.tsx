@@ -5,12 +5,14 @@ import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PageTransition from './components/PageTransition';
+import LiveChatWidget from './components/LiveChatWidget';
 import Home from './pages/Home';
 import AirportTransfers from './pages/AirportTransfers';
 import Pricing from './pages/Pricing';
 import StudentDiscount from './pages/StudentDiscount';
 import Book from './pages/Book';
 import Contact from './pages/Contact';
+import FAQ from './pages/FAQ';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -36,6 +38,7 @@ function AnimatedRoutes() {
         <Route path="/student-discount" element={<PageTransition><StudentDiscount /></PageTransition>} />
         <Route path="/book" element={<PageTransition><Book /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );
@@ -71,6 +74,7 @@ function AppContent() {
         <AnimatedRoutes />
       </main>
       <Footer />
+      <LiveChatWidget />
     </div>
   );
 }
