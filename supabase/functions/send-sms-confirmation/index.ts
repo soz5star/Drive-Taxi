@@ -26,16 +26,30 @@ Deno.serve(async (req: Request) => {
   try {
     const data: SMSData = await req.json();
 
-    const twilioAccountSid = Deno.env.get("TWILIO_ACCOUNT_SID");
-    const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
-    const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
+    const clickSendUsername = Deno.env.get("CLICKSEND_USERNAME");
+    const clickSendApiKey = Deno.env.get("CLICKSEND_API_KEY");
+    const clickSendFrom = Deno.env.get("CLICKSEND_FROM") || "DriveTaxi";
+    const autoSmsEnabled = Deno.env.get("AUTO_SMS_ENABLED") !== "false"; // default true
 
-    if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-      console.error("Twilio not configured");
+    if (!autoSmsEnabled) {
+      console.log("Auto-SMS is disabled");
+      return new Response(
+        JSON.stringify({ success: true, skipped: true, reason: "Auto-SMS disabled" }),
+        {
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    if (!clickSendUsername || !clickSendApiKey) {
+      console.error("ClickSend not configured");
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: "SMS not configured. Please add Twilio credentials in Supabase secrets." 
+          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets." 
         }),
         {
           status: 500,
@@ -61,34 +75,42 @@ Deno.serve(async (req: Request) => {
     // Create SMS message
     const message = `Hi ${data.name}, your taxi booking is confirmed! Pickup: ${data.pickupLocation} on ${data.pickupDate} at ${data.pickupTime}. We'll contact you shortly. - Drive Taxi`;
 
-    // Send SMS via Twilio
-    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
-    const auth = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
+    // Send SMS via ClickSend
+    const clickSendUrl = "https://rest.clicksend.com/v3/sms/send";
+    const auth = btoa(`${clickSendUsername}:${clickSendApiKey}`);
 
-    const smsResponse = await fetch(twilioUrl, {
+    const smsResponse = await fetch(clickSendUrl, {
       method: "POST",
       headers: {
         "Authorization": `Basic ${auth}`,
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: new URLSearchParams({
-        From: twilioPhoneNumber,
-        To: formattedPhone,
-        Body: message,
-      }).toString(),
+      body: JSON.stringify({
+        messages: [
+          {
+            to: formattedPhone,
+            body: message,
+            from: clickSendFrom,
+          }
+        ]
+      }),
     });
 
     if (!smsResponse.ok) {
       const error = await smsResponse.text();
-      console.error("Twilio error:", error);
+      console.error("ClickSend error:", error);
       throw new Error(`Failed to send SMS: ${error}`);
     }
 
     const result = await smsResponse.json();
-    console.log("SMS sent successfully:", result.sid);
+    console.log("SMS sent successfully:", result.data?.messages?.[0]?.message_id || "unknown");
 
     return new Response(
-      JSON.stringify({ success: true, messageSid: result.sid }),
+      JSON.stringify({ 
+        success: true, 
+        messageId: result.data?.messages?.[0]?.message_id || "unknown",
+        status: result.data?.messages?.[0]?.status 
+      }),
       {
         headers: {
           ...corsHeaders,
