@@ -51,7 +51,7 @@ export default function SMSManager() {
     }
   ]);
 
-  const [logs] = useState<SMSLog[]>([
+  const [logs, setLogs] = useState<SMSLog[]>([
     { id: '1', to: '+447470856699', message: 'Booking confirmed...', status: 'sent', timestamp: '2024-01-15 14:30' },
     { id: '2', to: '+447123456789', message: 'Driver assigned...', status: 'sent', timestamp: '2024-01-15 13:15' },
   ]);
@@ -59,12 +59,48 @@ export default function SMSManager() {
   const handleSendSMS = async () => {
     if (!phoneNumber || !message) return;
     setSending(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setSending(false);
-    setPhoneNumber('');
-    setMessage('');
-    alert('SMS sent successfully! (Demo mode)');
+    
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      const response = await fetch(`${supabaseUrl}/functions/v1/send-sms-manual`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phone: phoneNumber,
+          message: message,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        // Add to logs
+        const newLog: SMSLog = {
+          id: Date.now().toString(),
+          to: phoneNumber,
+          message: message,
+          status: 'sent',
+          timestamp: new Date().toLocaleString('en-GB'),
+        };
+        setLogs([newLog, ...logs]);
+        
+        setPhoneNumber('');
+        setMessage('');
+        alert('SMS sent successfully!');
+      } else {
+        alert(`Failed to send SMS: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+      alert('Failed to send SMS. Check console for details.');
+    } finally {
+      setSending(false);
+    }
   };
 
   const toggleTemplate = (id: string) => {
