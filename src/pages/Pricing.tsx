@@ -6,7 +6,6 @@ import AnimatedButton from '../components/AnimatedButton';
 import AnimatedLink from '../components/AnimatedLink';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
-import PriceCalculator from '../components/PriceCalculator';
 
 export default function Pricing() {
   const routes = [
@@ -87,14 +86,6 @@ export default function Pricing() {
           </div>
         </section>
       </AnimatedSection>
-
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <PriceCalculator />
-          </div>
-        </div>
-      </section>
 
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">

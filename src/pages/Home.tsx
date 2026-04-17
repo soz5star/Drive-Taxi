@@ -8,7 +8,6 @@ import Testimonials from '../components/Testimonials';
 import HowItWorks from '../components/HowItWorks';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
-import ServiceAreaMap from '../components/ServiceAreaMap';
 
 export default function Home() {
   const { scrollY } = useScroll();
@@ -194,16 +193,6 @@ export default function Home() {
                 <p className="text-gray-600 text-lg">{service.description}</p>
               </AnimatedCard>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <AnimatedSection>
-              <ServiceAreaMap />
-            </AnimatedSection>
           </div>
         </div>
       </section>

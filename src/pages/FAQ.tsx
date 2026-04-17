@@ -19,21 +19,6 @@ const faqData: FAQItem[] = [
     answer: 'You can book through our website booking form, call us directly at 07470 856699, or message us on WhatsApp. For airport transfers, we recommend booking at least 24 hours in advance to guarantee availability.'
   },
   {
-    category: 'Booking',
-    question: 'Can I book for someone else?',
-    answer: 'Yes, absolutely. Just provide the passenger\'s name and contact details when booking. We\'ll send all confirmations to your email, and the driver will have the passenger\'s details.'
-  },
-  {
-    category: 'Booking',
-    question: 'Do you accept last-minute bookings?',
-    answer: 'We try to accommodate last-minute bookings when possible, but availability isn\'t guaranteed. For airport transfers and early morning journeys, advance booking is strongly recommended.'
-  },
-  {
-    category: 'Pricing & Payment',
-    question: 'Are your prices fixed or estimates?',
-    answer: 'Prices on our website are estimates based on standard routes. Your final quote may vary depending on specific pickup/dropoff locations, time of day, additional stops, waiting time, and seasonal demand. You\'ll receive a confirmed price before booking.'
-  },
-  {
     category: 'Pricing & Payment',
     question: 'What payment methods do you accept?',
     answer: 'We accept cash, card payments in the vehicle, and bank transfers. For corporate accounts, we offer invoice payment terms. Please let us know your preferred payment method when booking.'
@@ -60,28 +45,13 @@ const faqData: FAQItem[] = [
   },
   {
     category: 'Services',
-    question: 'Do you provide child seats?',
-    answer: 'Yes, child seats are available on request at no extra charge. Please specify the age/weight of your child when booking so we can provide the appropriate seat.'
-  },
-  {
-    category: 'Services',
     question: 'Can I bring pets?',
     answer: 'Yes, we welcome well-behaved pets. Please mention this when booking so we can prepare the vehicle. Pet carriers are recommended for smaller animals.'
   },
   {
     category: 'Services',
-    question: 'Do you do long-distance journeys beyond Scotland?',
-    answer: 'Yes, we provide long-distance taxi services throughout the UK. Popular destinations include Newcastle, Manchester, and London. Contact us for a custom quote.'
-  },
-  {
-    category: 'Services',
     question: 'Can I make multiple stops?',
     answer: 'Yes, multiple stops are possible. Additional charges may apply depending on distance and time. Let us know your full itinerary when booking for an accurate quote.'
-  },
-  {
-    category: 'Cancellations',
-    question: 'What is your cancellation policy?',
-    answer: 'Cancellations made more than 24 hours before pickup are fully refundable. Cancellations within 24 hours may incur a charge depending on the circumstances. No-shows without notice will be charged the full fare.'
   },
   {
     category: 'Cancellations',
