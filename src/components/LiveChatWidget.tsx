@@ -5,6 +5,7 @@ import { MessageCircle, X, Phone, Clock } from 'lucide-react';
 export default function LiveChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     // Show tooltip after 5 seconds
@@ -27,6 +28,15 @@ export default function LiveChatWidget() {
     setIsOpen(!isOpen);
     setShowTooltip(false);
   };
+
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDismissed(true);
+    setIsOpen(false);
+    setShowTooltip(false);
+  };
+
+  if (dismissed) return null;
 
   const whatsappMessage = encodeURIComponent(
     "Hi! I'm interested in booking a taxi. Can you help me?"
@@ -161,7 +171,21 @@ export default function LiveChatWidget() {
           )}
         </AnimatePresence>
 
-        {/* Main Button */}
+        {/* Main Button + Dismiss X */}
+        <div className="relative">
+          {/* Small X to dismiss entirely */}
+          {!isOpen && (
+            <motion.button
+              onClick={handleDismiss}
+              className="absolute -top-1 -right-1 z-10 w-5 h-5 bg-gray-600 hover:bg-gray-800 text-white rounded-full flex items-center justify-center shadow-md"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 6 }}
+              title="Dismiss"
+            >
+              <X className="w-3 h-3" />
+            </motion.button>
+          )}
         <motion.button
           onClick={handleChatOpen}
           className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors ${
@@ -212,6 +236,7 @@ export default function LiveChatWidget() {
             )}
           </AnimatePresence>
         </motion.button>
+        </div>
       </div>
     </>
   );
