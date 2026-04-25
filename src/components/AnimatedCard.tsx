@@ -1,3 +1,4 @@
+import type { TargetAndTransition } from 'framer-motion';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ReactNode, useRef } from 'react';
 
@@ -44,7 +45,7 @@ export default function AnimatedCard({
     y.set(0);
   };
 
-  const getHoverAnimation = () => {
+  const getHoverAnimation = (): TargetAndTransition => {
     if (!hoverEffect) return {};
     
     switch (hoverEffect) {
@@ -52,25 +53,25 @@ export default function AnimatedCard({
         return {
           y: -12,
           boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
-          transition: { duration: 0.3, ease: 'easeOut' }
+          transition: { duration: 0.3, ease: [0, 0, 0.2, 1] as const }
         };
       case 'glow':
         return {
           y: -8,
           boxShadow: `0 20px 40px ${glowColor}`,
-          transition: { duration: 0.3, ease: 'easeOut' }
+          transition: { duration: 0.3, ease: [0, 0, 0.2, 1] as const }
         };
       case 'scale':
         return {
           scale: 1.03,
           boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
-          transition: { duration: 0.3, ease: 'easeOut' }
+          transition: { duration: 0.3, ease: [0, 0, 0.2, 1] as const }
         };
       case 'border':
         return {
           borderColor: '#FACC15',
           boxShadow: '0 0 0 2px rgba(250, 204, 21, 0.3)',
-          transition: { duration: 0.3, ease: 'easeOut' }
+          transition: { duration: 0.3, ease: [0, 0, 0.2, 1] as const }
         };
       case 'tilt':
         return {};
@@ -79,7 +80,7 @@ export default function AnimatedCard({
         return {
           y: -8,
           boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
-          transition: { duration: 0.3, ease: 'easeOut' }
+          transition: { duration: 0.3, ease: [0, 0, 0.2, 1] as const }
         };
     }
   };
@@ -113,7 +114,7 @@ export default function AnimatedCard({
       transition={{
         duration: 0.6,
         delay,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }}
       whileHover={getHoverAnimation()}
       onMouseMove={handleMouseMove}

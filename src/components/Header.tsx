@@ -1,5 +1,6 @@
+import type { Variants } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Phone, Menu, X, ChevronDown } from 'lucide-react';
+import { Phone, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
@@ -14,6 +15,13 @@ export default function Header() {
     scrollY,
     [0, 100],
     ['rgba(0, 0, 0, 0.9)', 'rgba(0, 0, 0, 0.98)']
+  );
+  
+  // Scroll progress bar - computed at component level
+  const scrollProgress = useTransform(
+    scrollY,
+    [0, typeof window !== 'undefined' ? document.body.scrollHeight - window.innerHeight : 1000],
+    [0, 1]
   );
 
   const isActive = (path: string) => location.pathname === path;
@@ -44,24 +52,24 @@ export default function Header() {
 
   const navItemVariants = {
     hidden: { opacity: 0, y: -10 },
-    visible: (i: number) => ({
+    visible: (i: number): { opacity: number; y: number; transition: { delay: number; duration: number; ease: readonly [number, number, number, number] } } => ({
       opacity: 1,
       y: 0,
       transition: {
         delay: 0.1 + i * 0.05,
         duration: 0.4,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }
     })
   };
 
-  const mobileMenuVariants = {
+  const mobileMenuVariants: Variants = {
     hidden: { 
       opacity: 0, 
       height: 0,
       transition: {
         duration: 0.3,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }
     },
     visible: { 
@@ -69,21 +77,21 @@ export default function Header() {
       height: 'auto',
       transition: {
         duration: 0.4,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const,
         staggerChildren: 0.05,
         delayChildren: 0.1
       }
     }
   };
 
-  const mobileItemVariants = {
+  const mobileItemVariants: Variants = {
     hidden: { opacity: 0, x: -20 },
     visible: { 
       opacity: 1, 
       x: 0,
       transition: {
         duration: 0.3,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }
     }
   };
@@ -266,7 +274,7 @@ export default function Header() {
               exit="hidden"
             >
               <div className="space-y-1">
-                {navigation.map((item, index) => (
+                {navigation.map((item) => (
                   <motion.div
                     key={item.path}
                     variants={mobileItemVariants}
@@ -320,7 +328,7 @@ export default function Header() {
       <motion.div
         className="absolute bottom-0 left-0 h-0.5 bg-yellow-400"
         style={{
-          scaleX: useTransform(scrollY, [0, document.body.scrollHeight - window.innerHeight], [0, 1]),
+          scaleX: scrollProgress,
           transformOrigin: 'left'
         }}
       />

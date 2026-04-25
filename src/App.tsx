@@ -15,6 +15,7 @@ import Contact from './pages/Contact';
 import FAQ from './pages/FAQ';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -24,7 +25,7 @@ function AnimatedRoutes() {
     return (
       <Routes location={location} key={location.pathname}>
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
       </Routes>
     );
   }
