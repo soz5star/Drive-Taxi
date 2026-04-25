@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { Car, Plane, MapPin, Star, Clock, Shield } from 'lucide-react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface FloatingElement {
   id: number;
@@ -25,6 +26,13 @@ export default function FloatingElements({
   className = '',
   color = 'yellow-400'
 }: FloatingElementsProps) {
+  const prefersReducedMotion = useReducedMotion();
+  
+  // Return nothing if user prefers reduced motion
+  if (prefersReducedMotion) {
+    return null;
+  }
+  
   const elements = useMemo<FloatingElement[]>(() => {
     return Array.from({ length: count }, (_, i) => ({
       id: i,

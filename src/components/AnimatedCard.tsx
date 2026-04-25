@@ -1,6 +1,7 @@
 import type { TargetAndTransition } from 'framer-motion';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ReactNode, useRef } from 'react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface AnimatedCardProps {
   children: ReactNode;
@@ -20,6 +21,7 @@ export default function AnimatedCard({
   glowColor = 'rgba(250, 204, 21, 0.3)'
 }: AnimatedCardProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = useReducedMotion();
   
   // For tilt effect
   const x = useMotionValue(0);
@@ -104,6 +106,22 @@ export default function AnimatedCard({
     transformStyle: 'preserve-3d' as const,
     perspective: 1000
   } : {};
+
+  // If reduced motion preferred, disable all animations except simple fade
+  if (prefersReducedMotion) {
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.3, delay }}
+        className={`rounded-xl shadow-lg ${getVariantClasses()} ${className}`}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

@@ -843,7 +843,8 @@ function AnalyticsView({ bookings }: { bookings: Booking[] }) {
 
 // TodaySchedule Component - Shows today's bookings at a glance
 function TodaySchedule({ bookings, onSelectBooking }: { bookings: Booking[]; onSelectBooking: (booking: Booking) => void }) {
-  const today = new Date().toISOString().split('T')[0];
+  // Use local date to avoid timezone issues (returns YYYY-MM-DD in local time)
+  const today = new Date().toLocaleDateString('en-CA');
   const todaysBookings = bookings.filter(b => b.pickup_date === today).sort((a, b) => a.pickup_time.localeCompare(b.pickup_time));
   
   const confirmedCount = todaysBookings.filter(b => b.status === 'confirmed').length;

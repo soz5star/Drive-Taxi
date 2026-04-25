@@ -28,6 +28,7 @@ export default function Book() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -39,10 +40,56 @@ export default function Book() {
     }
   };
 
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Check pickup date not in past
+    if (formData.pickupDate) {
+      const selectedDate = new Date(formData.pickupDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        newErrors.pickupDate = 'Pickup date cannot be in the past';
+      }
+    }
+
+    // Check pickup and dropoff not same
+    if (formData.pickupLocation && formData.dropoffLocation) {
+      if (formData.pickupLocation.toLowerCase().trim() === formData.dropoffLocation.toLowerCase().trim()) {
+        newErrors.dropoffLocation = 'Pickup and dropoff locations cannot be the same';
+      }
+    }
+
+    // UK phone validation
+    if (formData.phone) {
+      const phoneRegex = /^(\+44|0)\s?\d{4}\s?\d{6}$/;
+      if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+        newErrors.phone = 'Please enter a valid UK phone number (e.g., 07123 456789)';
+      }
+    }
+
+    // Email validation if provided
+    if (formData.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email address';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
+
+    // Validate before submitting
+    if (!validateForm()) {
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       // Check if supabase is configured
@@ -293,6 +340,7 @@ export default function Book() {
                         id="name"
                         name="name"
                         required
+                        aria-required="true"
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
@@ -311,11 +359,17 @@ export default function Book() {
                           id="phone"
                           name="phone"
                           required
+                          aria-required="true"
+                          aria-invalid={!!errors.phone}
+                          aria-describedby={errors.phone ? "phone-error" : undefined}
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.phone ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                           placeholder="07123 456789"
                         />
+                        {errors.phone && (
+                          <p id="phone-error" className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -333,11 +387,16 @@ export default function Book() {
                       type="email"
                       id="email"
                       name="email"
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? "email-error" : undefined}
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                       placeholder="john@example.com"
                     />
+                    {errors.email && (
+                      <p id="email-error" className="mt-1 text-sm text-red-600">{errors.email}</p>
+                    )}
                   </motion.div>
 
                   <motion.div
@@ -358,6 +417,7 @@ export default function Book() {
                           id="pickupLocation"
                           name="pickupLocation"
                           required
+                          aria-required="true"
                           value={formData.pickupLocation}
                           onChange={handleChange}
                           className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
@@ -377,11 +437,17 @@ export default function Book() {
                           id="dropoffLocation"
                           name="dropoffLocation"
                           required
+                          aria-required="true"
+                          aria-invalid={!!errors.dropoffLocation}
+                          aria-describedby={errors.dropoffLocation ? "dropoffLocation-error" : undefined}
                           value={formData.dropoffLocation}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.dropoffLocation ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                           placeholder="e.g. Edinburgh Airport"
                         />
+                        {errors.dropoffLocation && (
+                          <p id="dropoffLocation-error" className="mt-1 text-sm text-red-600">{errors.dropoffLocation}</p>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -404,10 +470,16 @@ export default function Book() {
                           id="pickupDate"
                           name="pickupDate"
                           required
+                          aria-required="true"
+                          aria-invalid={!!errors.pickupDate}
+                          aria-describedby={errors.pickupDate ? "pickupDate-error" : undefined}
                           value={formData.pickupDate}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.pickupDate ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                         />
+                        {errors.pickupDate && (
+                          <p id="pickupDate-error" className="mt-1 text-sm text-red-600">{errors.pickupDate}</p>
+                        )}
                       </div>
                     </div>
 
@@ -422,6 +494,7 @@ export default function Book() {
                           id="pickupTime"
                           name="pickupTime"
                           required
+                          aria-required="true"
                           value={formData.pickupTime}
                           onChange={handleChange}
                           className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
@@ -502,16 +575,17 @@ export default function Book() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: 0.7 }}
                   >
-                    <label className="flex items-center space-x-3 cursor-pointer group">
+                    <label htmlFor="isStudent" className="flex items-center space-x-3 cursor-pointer group">
                       <div className="relative">
                         <input
                           type="checkbox"
+                          id="isStudent"
                           name="isStudent"
                           checked={formData.isStudent}
                           onChange={handleChange}
-                          className="sr-only"
+                          className="peer sr-only"
                         />
-                        <div className={`w-6 h-6 border-2 rounded transition-all ${formData.isStudent ? 'bg-yellow-400 border-yellow-400' : 'border-gray-300 group-hover:border-yellow-400'}`}>
+                        <div className={`w-6 h-6 border-2 rounded transition-all peer-focus:ring-2 peer-focus:ring-yellow-400 peer-focus:ring-offset-2 ${formData.isStudent ? 'bg-yellow-400 border-yellow-400' : 'border-gray-300 group-hover:border-yellow-400'}`}>
                           {formData.isStudent && (
                             <CheckCircle className="h-5 w-5 text-black" />
                           )}

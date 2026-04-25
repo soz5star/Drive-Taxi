@@ -166,7 +166,10 @@ export default function FAQ() {
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                 >
                   <button
+                    id={`faq-button-${index}`}
                     onClick={() => toggleFAQ(index)}
+                    aria-expanded={openIndex === index}
+                    aria-controls={`faq-panel-${index}`}
                     className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center space-x-3">
@@ -183,6 +186,9 @@ export default function FAQ() {
                   <AnimatePresence>
                     {openIndex === index && (
                       <motion.div
+                        id={`faq-panel-${index}`}
+                        role="region"
+                        aria-labelledby={`faq-button-${index}`}
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}

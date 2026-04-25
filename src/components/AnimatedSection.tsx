@@ -1,5 +1,6 @@
 import { motion, Variants } from 'framer-motion';
 import { ReactNode } from 'react';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface AnimatedSectionProps {
   children: ReactNode;
@@ -71,6 +72,23 @@ export default function AnimatedSection({
   once = true,
   amount = 0.3
 }: AnimatedSectionProps) {
+  const prefersReducedMotion = useReducedMotion();
+  
+  // If user prefers reduced motion, only use simple fade with no movement
+  if (prefersReducedMotion) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once, amount, margin: '-50px' }}
+        transition={{ duration: 0.3, delay }}
+        className={className}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+  
   const config = getVariantConfig(variant, direction);
   
   return (

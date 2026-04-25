@@ -154,8 +154,10 @@ export default function Home() {
             >
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&q=80&fm=webp"
                   alt="Professional taxi service"
+                  width="800"
+                  height="320"
                   className="w-full h-80 object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -189,8 +191,12 @@ export default function Home() {
       {/* St Andrews Scenery Banner */}
       <section className="relative h-64 md:h-80 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80"
+          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80&fm=webp"
           alt="St Andrews, Scotland"
+          width="1400"
+          height="320"
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/55" />
@@ -304,6 +310,10 @@ export default function Home() {
                   <img
                     src="/ford-grand-cmax.jpg"
                     alt="Ford Grand C-Max taxi"
+                    width="600"
+                    height="288"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-72 object-cover"
                   />
                   <div className="absolute top-4 left-4 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full">
@@ -388,7 +398,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="flex items-center space-x-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
                 >
-                  <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
+                  <img src="https://www.google.com/favicon.ico" alt="Google" width="16" height="16" loading="lazy" className="w-4 h-4" />
                   <span>See Google Reviews</span>
                 </a>
               </div>
