@@ -5,10 +5,17 @@ import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import SEO from '../components/SEO';
 
 export default function Contact() {
   return (
     <div>
+      <SEO
+        title="Contact Drive Taxi St Andrews | Book Airport Transfer"
+        description="Contact Drive Taxi for airport transfers, local journeys & student discounts. WhatsApp, phone, or email. 24/7 service. Call 07470 856699"
+        canonical="https://drivetaxi.co.uk/contact"
+        keywords="contact St Andrews taxi, book airport transfer, taxi phone number, WhatsApp taxi booking"
+      />
       <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />

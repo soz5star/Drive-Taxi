@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drivetaxi-v1';
+const CACHE_NAME = 'drivetaxi-v2';
 const urlsToCache = [
   '/',
   '/book',
@@ -6,6 +6,11 @@ const urlsToCache = [
   '/airport-transfers',
   '/student-discount',
   '/contact',
+  '/faq',
+  '/st-andrews-to-edinburgh-airport',
+  '/st-andrews-to-glasgow-airport',
+  '/st-andrews-to-dundee-airport',
+  '/leuchars-taxi',
   '/manifest.json'
 ];
 

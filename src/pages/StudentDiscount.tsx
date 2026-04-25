@@ -5,6 +5,7 @@ import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import SEO from '../components/SEO';
 
 export default function StudentDiscount() {
   const benefits = [
@@ -25,6 +26,12 @@ export default function StudentDiscount() {
 
   return (
     <div>
+      <SEO
+        title="Student Taxi Discount St Andrews | 10% Off Airport Transfers"
+        description="10% student discount on all taxi journeys from St Andrews. Airport transfers to Edinburgh, Glasgow & Dundee. Valid student ID required. Book now: 07470 856699"
+        canonical="https://drivetaxi.co.uk/student-discount"
+        keywords="student taxi discount St Andrews, student airport transfer, cheap taxi students, St Andrews student transport"
+      />
       <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />

@@ -6,7 +6,10 @@ import AnimatedCard from '../components/AnimatedCard';
 import TrustBadges from '../components/TrustBadges';
 import HowItWorks from '../components/HowItWorks';
 import ParticleBackground from '../components/ParticleBackground';
+import GoogleReviews from '../components/GoogleReviews';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import ErrorBoundary from '../components/ErrorBoundary';
+import SEO from '../components/SEO';
 
 export default function Home() {
   const { scrollY } = useScroll();
@@ -46,6 +49,12 @@ export default function Home() {
 
   return (
     <div>
+      <SEO
+        title="St Andrews Taxi | Airport Transfers Edinburgh & Glasgow | Drive Taxi"
+        description="Professional taxi service in St Andrews. Reliable airport transfers to Edinburgh, Glasgow & Dundee. 24/7 service, student discounts, advance booking. Call 07470 856699"
+        canonical="https://drivetaxi.co.uk"
+        keywords="St Andrews taxi, airport transfer Edinburgh, Glasgow airport taxi, Dundee taxi, Fife taxi service, student taxi discount"
+      />
       <section className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white py-20 md:py-28 overflow-hidden">
         <AnimatedBackground3D />
         <ParticleBackground />
@@ -368,7 +377,7 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Google Reviews Style */}
+          {/* Google Reviews */}
           <AnimatedSection delay={0.3}>
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center justify-between mb-8">
@@ -383,40 +392,9 @@ export default function Home() {
                   <span>See Google Reviews</span>
                 </a>
               </div>
-              <div className="grid md:grid-cols-3 gap-6">
-                {[
-                  { name: 'Sarah M.', initial: 'S', color: 'bg-blue-500', role: 'University Student', text: 'Absolutely fantastic service! Always on time for my early morning airport runs. The driver was professional and the car was spotless.', time: '2 weeks ago' },
-                  { name: 'James K.', initial: 'J', color: 'bg-green-500', role: 'Business Traveller', text: 'Best taxi service in St Andrews. Reliable, professional, and great prices. Would 100% recommend for airport transfers.', time: '1 month ago' },
-                  { name: 'Emma T.', initial: 'E', color: 'bg-purple-500', role: 'Local Resident', text: 'I use Drive Taxi for all my airport transfers. They never let me down and the booking process is so easy.', time: '3 weeks ago' },
-                ].map((review, i) => (
-                  <motion.div
-                    key={i}
-                    className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 }}
-                  >
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className={`w-10 h-10 ${review.color} rounded-full flex items-center justify-center flex-shrink-0`}>
-                        <span className="text-white font-bold">{review.initial}</span>
-                      </div>
-                      <div>
-                        <p className="font-bold text-gray-900 text-sm">{review.name}</p>
-                        <p className="text-gray-500 text-xs">{review.role}</p>
-                      </div>
-                      <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4 ml-auto" />
-                    </div>
-                    <div className="flex mb-3">
-                      {[...Array(5)].map((_, s) => (
-                        <Star key={s} className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                      ))}
-                    </div>
-                    <p className="text-gray-700 text-sm leading-relaxed">"{review.text}"</p>
-                    <p className="text-gray-400 text-xs mt-3">{review.time}</p>
-                  </motion.div>
-                ))}
-              </div>
+              <ErrorBoundary>
+                <GoogleReviews />
+              </ErrorBoundary>
             </div>
           </AnimatedSection>
         </div>

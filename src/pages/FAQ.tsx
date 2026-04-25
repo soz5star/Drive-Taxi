@@ -5,6 +5,7 @@ import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/AnimatedButton';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import SEO from '../components/SEO';
 
 interface FAQItem {
   question: string;
@@ -86,6 +87,12 @@ export default function FAQ() {
 
   return (
     <div>
+      <SEO
+        title="Taxi FAQ St Andrews | Airport Transfer Questions | Drive Taxi"
+        description="Frequently asked questions about St Andrews taxi service. Airport transfers, booking, pricing, student discounts & more. Call 07470 856699 for enquiries."
+        canonical="https://drivetaxi.co.uk/faq"
+        keywords="taxi FAQ St Andrews, airport transfer questions, taxi booking help, St Andrews taxi information"
+      />
       {/* Structured Data for SEO */}
       <script type="application/ld+json">
         {JSON.stringify(structuredData)}

@@ -5,6 +5,7 @@ import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import SEO from '../components/SEO';
 
 export default function AirportTransfers() {
   const airports = [
@@ -39,6 +40,12 @@ export default function AirportTransfers() {
 
   return (
     <div>
+      <SEO
+        title="Airport Transfers St Andrews | Edinburgh & Glasgow | Drive Taxi"
+        description="Reliable airport transfers from St Andrews to Edinburgh, Glasgow & Dundee airports. Flight tracking, meet & greet, 24/7 service. Book now: 07470 856699"
+        canonical="https://drivetaxi.co.uk/airport-transfers"
+        keywords="St Andrews airport transfer, Edinburgh airport taxi, Glasgow airport transfer, Dundee airport taxi, airport taxi Fife"
+      />
       <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />

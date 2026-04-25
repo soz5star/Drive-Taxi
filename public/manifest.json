@@ -9,15 +9,15 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/vite.svg",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/vite.svg",
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
@@ -29,14 +29,14 @@
       "short_name": "Book",
       "description": "Quick booking for your journey",
       "url": "/book",
-      "icons": [{ "src": "/vite.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "View Pricing",
       "short_name": "Pricing",
       "description": "Check our pricing estimates",
       "url": "/pricing",
-      "icons": [{ "src": "/vite.svg", "sizes": "96x96" }]
+      "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
     }
   ]
 }

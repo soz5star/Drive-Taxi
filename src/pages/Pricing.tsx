@@ -6,6 +6,7 @@ import AnimatedButton from '../components/AnimatedButton';
 import AnimatedLink from '../components/AnimatedLink';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import SEO from '../components/SEO';
 
 export default function Pricing() {
   const routes = [
@@ -41,6 +42,12 @@ export default function Pricing() {
 
   return (
     <div>
+      <SEO
+        title="Taxi Prices St Andrews | Airport Transfer Costs | Drive Taxi"
+        description="Transparent taxi pricing from St Andrews. Edinburgh airport £120, Glasgow airport £190, Dundee from £50. Student discounts available. Get a free quote today."
+        canonical="https://drivetaxi.co.uk/pricing"
+        keywords="taxi prices St Andrews, airport transfer cost, Edinburgh taxi price, Glasgow taxi quote, St Andrews taxi rates"
+      />
       <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />

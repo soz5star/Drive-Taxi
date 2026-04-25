@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -62,7 +62,7 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!supabase) {
       setLoading(false);
       console.warn('Supabase is not configured. Admin dashboard will be empty.');
@@ -97,7 +97,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -105,7 +105,31 @@ export default function AdminDashboard() {
       return;
     }
     fetchData();
-  }, [user, navigate]);
+
+    // Subscribe to realtime bookings updates
+    if (supabase) {
+      const subscription = supabase
+        .channel('bookings_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'bookings',
+          },
+          (payload) => {
+            console.log('Booking change received:', payload);
+            // Refresh bookings data when any change occurs
+            fetchData();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [user, navigate, fetchData]);
 
   const handleSignOut = async () => {
     await signOut();

@@ -1,25 +1,28 @@
 import { useState, FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, Phone, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, MessageCircle, Phone, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import SEO from '../components/SEO';
 
 export default function Book() {
+  const [searchParams] = useSearchParams();
+  
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
-    pickupLocation: '',
-    dropoffLocation: '',
+    pickupLocation: searchParams.get('pickup') || '',
+    dropoffLocation: searchParams.get('dropoff') || '',
     pickupDate: '',
     pickupTime: '',
     flightNumber: '',
-    passengers: '1',
-    luggage: '1',
-    isStudent: false,
+    passengers: searchParams.get('passengers') || '1',
+    luggage: searchParams.get('luggage') || '1',
+    isStudent: searchParams.get('student') === 'true',
     notes: '',
   });
 
@@ -164,6 +167,12 @@ export default function Book() {
 
   return (
     <div>
+      <SEO
+        title="Book a Taxi St Andrews | Airport Transfer Quote | Drive Taxi"
+        description="Book your taxi online. St Andrews airport transfers, local journeys & long-distance travel. Instant quote, 24/7 service, student discounts. Call 07470 856699"
+        canonical="https://drivetaxi.co.uk/book"
+        keywords="book taxi St Andrews, taxi quote, airport transfer booking, St Andrews taxi online"
+      />
       <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
@@ -193,27 +202,61 @@ export default function Book() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             {submitStatus === 'success' && (
-              <AnimatedCard className="mb-8 bg-green-50 border-2 border-green-400 p-6" hoverEffect={false}>
-                <motion.div
-                  className="flex items-start space-x-4"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4 }}
-                >
+              <>
+                <AnimatedCard className="mb-8 bg-green-50 border-2 border-green-400 p-6" hoverEffect={false}>
                   <motion.div
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    className="flex items-start space-x-4"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
                   >
-                    <CheckCircle className="h-8 w-8 text-green-600 flex-shrink-0" />
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 0.6, ease: 'easeOut' }}
+                    >
+                      <CheckCircle className="h-8 w-8 text-green-600 flex-shrink-0" />
+                    </motion.div>
+                    <div>
+                      <h3 className="text-xl font-bold text-green-900 mb-2">Booking Request Received!</h3>
+                      <p className="text-green-800">
+                        Thank you for your booking request. We'll contact you shortly to confirm your journey details and provide a final quote.
+                      </p>
+                    </div>
                   </motion.div>
-                  <div>
-                    <h3 className="text-xl font-bold text-green-900 mb-2">Booking Request Received!</h3>
-                    <p className="text-green-800">
-                      Thank you for your booking request. We'll contact you shortly to confirm your journey details and provide a final quote.
-                    </p>
+                </AnimatedCard>
+
+                {/* WhatsApp Quick Confirm */}
+                <AnimatedCard className="mb-8 bg-[#25D366]/10 border-2 border-[#25D366] p-6" hoverEffect={false}>
+                  <div className="flex items-start space-x-4">
+                    <div className="bg-[#25D366] p-2 rounded-lg flex-shrink-0">
+                      <MessageCircle className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">Want to confirm faster?</h3>
+                      <p className="text-gray-700 mb-4">
+                        Message us on WhatsApp with your booking details for quicker confirmation.
+                      </p>
+                      <a
+                        href={`https://wa.me/447470856699?text=${encodeURIComponent(
+                          `Hi Drive Taxi, I just submitted a booking request:\n\n` +
+                          `Name: ${formData.name}\n` +
+                          `From: ${formData.pickupLocation}\n` +
+                          `To: ${formData.dropoffLocation}\n` +
+                          `Date: ${formData.pickupDate}\n` +
+                          `Time: ${formData.pickupTime}\n\n` +
+                          `Please confirm my booking. Thanks!`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#128C7E] transition-colors"
+                      >
+                        <MessageCircle className="h-5 w-5" />
+                        <span>Message on WhatsApp</span>
+                      </a>
+                    </div>
                   </div>
-                </motion.div>
-              </AnimatedCard>
+                </AnimatedCard>
+              </>
             )}
 
             {submitStatus === 'error' && (

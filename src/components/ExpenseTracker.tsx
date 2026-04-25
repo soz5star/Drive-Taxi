@@ -1,21 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Fuel, Wrench, Receipt, Trash2, TrendingDown, Calendar, PoundSterling } from 'lucide-react';
+import { Plus, Fuel, Wrench, Receipt, Trash2, TrendingDown, Calendar, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface Expense {
   id: string;
   date: string;
-  category: 'fuel' | 'maintenance' | 'insurance' | 'other';
+  category: 'fuel' | 'maintenance' | 'insurance' | 'tax' | 'other';
   description: string;
   amount: number;
 }
 
 export default function ExpenseTracker() {
-  const [expenses, setExpenses] = useState<Expense[]>([
-    { id: '1', date: '2024-01-15', category: 'fuel', description: 'Diesel - Shell', amount: 65.50 },
-    { id: '2', date: '2024-01-10', category: 'maintenance', description: 'Oil change', amount: 45.00 },
-  ]);
-  
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newExpense, setNewExpense] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -24,30 +22,79 @@ export default function ExpenseTracker() {
     amount: ''
   });
 
-  const handleAddExpense = () => {
-    if (!newExpense.description || !newExpense.amount) return;
-    
-    const expense: Expense = {
-      id: Date.now().toString(),
-      date: newExpense.date,
-      category: newExpense.category,
-      description: newExpense.description,
-      amount: parseFloat(newExpense.amount)
+  // Fetch expenses from Supabase
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('expenses')
+          .select('*')
+          .order('date', { ascending: false });
+
+        if (error) throw error;
+        setExpenses(data || []);
+      } catch (error) {
+        console.error('Error fetching expenses:', error);
+      } finally {
+        setLoading(false);
+      }
     };
+
+    fetchExpenses();
+  }, []);
+
+  const handleAddExpense = async () => {
+    if (!newExpense.description || !newExpense.amount || !supabase) return;
     
-    setExpenses([expense, ...expenses]);
-    setNewExpense({
-      date: new Date().toISOString().split('T')[0],
-      category: 'fuel',
-      description: '',
-      amount: ''
-    });
-    setShowAddForm(false);
+    try {
+      const { data, error } = await supabase
+        .from('expenses')
+        .insert([{
+          date: newExpense.date,
+          category: newExpense.category,
+          description: newExpense.description,
+          amount: parseFloat(newExpense.amount)
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setExpenses([data, ...expenses]);
+      setNewExpense({
+        date: new Date().toISOString().split('T')[0],
+        category: 'fuel',
+        description: '',
+        amount: ''
+      });
+      setShowAddForm(false);
+    } catch (error) {
+      console.error('Error adding expense:', error);
+      alert('Failed to add expense');
+    }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Delete this expense?')) return;
-    setExpenses(expenses.filter(e => e.id !== id));
+    if (!supabase) return;
+
+    try {
+      const { error } = await supabase
+        .from('expenses')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setExpenses(expenses.filter(e => e.id !== id));
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+      alert('Failed to delete expense');
+    }
   };
 
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -58,6 +105,7 @@ export default function ExpenseTracker() {
     fuel: 'bg-red-100 text-red-700',
     maintenance: 'bg-blue-100 text-blue-700',
     insurance: 'bg-green-100 text-green-700',
+    tax: 'bg-purple-100 text-purple-700',
     other: 'bg-gray-100 text-gray-700'
   };
 
@@ -65,6 +113,7 @@ export default function ExpenseTracker() {
     fuel: Fuel,
     maintenance: Wrench,
     insurance: Receipt,
+    tax: Receipt,
     other: Receipt
   };
 
@@ -164,6 +213,7 @@ export default function ExpenseTracker() {
                 <option value="fuel">Fuel</option>
                 <option value="maintenance">Maintenance</option>
                 <option value="insurance">Insurance</option>
+                <option value="tax">Tax</option>
                 <option value="other">Other</option>
               </select>
             </div>
@@ -212,6 +262,12 @@ export default function ExpenseTracker() {
 
       {/* Expenses List */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {loading && (
+          <div className="flex justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-yellow-400" />
+          </div>
+        )}
+        {!loading && (
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
@@ -249,7 +305,8 @@ export default function ExpenseTracker() {
             })}
           </tbody>
         </table>
-        {expenses.length === 0 && (
+        )}
+        {!loading && expenses.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <Receipt className="w-12 h-12 mx-auto mb-3 text-gray-300" />
             <p>No expenses recorded yet</p>
