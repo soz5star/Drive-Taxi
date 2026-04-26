@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, MessageCircle, Phone, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, Phone, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AnimatedCard from '../components/AnimatedCard';
 import ParticleBackground from '../components/ParticleBackground';
@@ -286,38 +286,6 @@ export default function Book() {
                       </p>
                     </div>
                   </motion.div>
-                </AnimatedCard>
-
-                {/* WhatsApp Quick Confirm */}
-                <AnimatedCard className="mb-8 bg-[#25D366]/10 border-2 border-[#25D366] p-6" hoverEffect={false}>
-                  <div className="flex items-start space-x-4">
-                    <div className="bg-[#25D366] p-2 rounded-lg flex-shrink-0">
-                      <MessageCircle className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">Want to confirm faster?</h3>
-                      <p className="text-gray-700 mb-4">
-                        Message us on WhatsApp with your booking details for quicker confirmation.
-                      </p>
-                      <a
-                        href={`https://wa.me/447470856699?text=${encodeURIComponent(
-                          `Hi Drive Taxi, I just submitted a booking request:\n\n` +
-                          `Name: ${formData.name}\n` +
-                          `From: ${formData.pickupLocation}\n` +
-                          `To: ${formData.dropoffLocation}\n` +
-                          `Date: ${formData.pickupDate}\n` +
-                          `Time: ${formData.pickupTime}\n\n` +
-                          `Please confirm my booking. Thanks!`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center space-x-2 bg-[#25D366] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#128C7E] transition-colors"
-                      >
-                        <MessageCircle className="h-5 w-5" />
-                        <span>Message on WhatsApp</span>
-                      </a>
-                    </div>
-                  </div>
                 </AnimatedCard>
               </>
             )}
