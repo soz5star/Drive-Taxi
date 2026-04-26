@@ -43,11 +43,8 @@ export default function Header() {
   const navigation = [
     { name: 'Home', path: '/' },
     { name: 'Airport Transfers', path: '/airport-transfers' },
-    { name: 'To Edinburgh Airport', path: '/st-andrews-to-edinburgh-airport' },
-    { name: 'To Glasgow Airport', path: '/st-andrews-to-glasgow-airport' },
     { name: 'Pricing', path: '/pricing' },
     { name: 'Student Discount', path: '/student-discount' },
-    { name: 'Leuchars Taxi', path: '/leuchars-taxi' },
     { name: 'FAQ', path: '/faq' },
     { name: 'Book Now', path: '/book' },
     { name: 'Contact', path: '/contact' },
