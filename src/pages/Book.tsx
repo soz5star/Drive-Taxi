@@ -142,6 +142,21 @@ export default function Book() {
           'Content-Type': 'application/json',
         };
 
+        // Check if owner notifications are enabled
+        let sendOwnerNotification = true;
+        try {
+          const { data: settingsData } = await supabase
+            .from('settings')
+            .select('value')
+            .eq('key', 'send_owner_notifications')
+            .single();
+          if (settingsData) {
+            sendOwnerNotification = settingsData.value;
+          }
+        } catch (error) {
+          console.warn('Could not fetch notification settings, defaulting to enabled');
+        }
+
         const emailResults = await Promise.allSettled([
           formData.email ? fetch(`${supabaseUrl}/functions/v1/send-customer-confirmation`, {
             method: 'POST',
@@ -149,11 +164,12 @@ export default function Book() {
             body: JSON.stringify(bookingData),
           }) : Promise.resolve(),
 
-          fetch(`${supabaseUrl}/functions/v1/send-owner-notification`, {
+          // Only send owner notification if enabled
+          sendOwnerNotification ? fetch(`${supabaseUrl}/functions/v1/send-owner-notification`, {
             method: 'POST',
             headers,
             body: JSON.stringify(bookingData),
-          }),
+          }) : Promise.resolve(),
 
           // Send SMS confirmation to customer
           formData.phone ? fetch(`${supabaseUrl}/functions/v1/send-sms-confirmation`, {
@@ -170,7 +186,7 @@ export default function Book() {
           }) : Promise.resolve(),
         ]);
 
-        const notificationTypes = ['customer email', 'owner email', 'customer SMS'];
+        const notificationTypes = ['customer email', sendOwnerNotification ? 'owner email' : 'owner email (skipped)', 'customer SMS'];
         for (let i = 0; i < emailResults.length; i++) {
           const result = emailResults[i];
           const notificationType = notificationTypes[i];

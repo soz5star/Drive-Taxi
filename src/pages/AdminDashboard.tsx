@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   LogOut, Trash2, Phone, Mail, MapPin, Calendar, Clock, Users, Luggage,
   Plane, MessageSquare, GraduationCap, RefreshCw, Download, Search, Filter,
-  DollarSign, TrendingUp, TrendingDown, Car, User, Package, CheckCircle
+  DollarSign, TrendingUp, TrendingDown, Car, User, Package, CheckCircle, Settings
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -48,7 +48,7 @@ interface Vehicle {
   status: string;
 }
 
-type Tab = 'bookings' | 'drivers' | 'vehicles' | 'analytics' | 'sms' | 'expenses';
+type Tab = 'bookings' | 'drivers' | 'vehicles' | 'analytics' | 'sms' | 'expenses' | 'settings';
 
 export default function AdminDashboard() {
   const { user, signOut } = useAuth();
@@ -61,6 +61,46 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('bookings');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+
+  // Notification settings from Supabase
+  const [sendOwnerNotifications, setSendOwnerNotifications] = useState(true);
+
+  // Fetch settings from Supabase
+  const fetchSettings = useCallback(async () => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'send_owner_notifications')
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = not found
+      if (data) {
+        setSendOwnerNotifications(data.value);
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  }, []);
+
+  const toggleOwnerNotifications = async () => {
+    if (!supabase) return;
+    const newValue = !sendOwnerNotifications;
+    setSendOwnerNotifications(newValue);
+    
+    try {
+      const { error } = await supabase
+        .from('settings')
+        .upsert({ key: 'send_owner_notifications', value: newValue }, { onConflict: 'key' });
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving setting:', error);
+      // Revert on error
+      setSendOwnerNotifications(!newValue);
+    }
+  };
 
   const fetchData = useCallback(async () => {
     if (!supabase) {
@@ -105,6 +145,7 @@ export default function AdminDashboard() {
       return;
     }
     fetchData();
+    fetchSettings();
 
     // Subscribe to realtime bookings updates
     if (supabase) {
@@ -396,6 +437,12 @@ export default function AdminDashboard() {
                 icon={TrendingDown}
                 label="Expenses"
               />
+              <TabButton
+                active={activeTab === 'settings'}
+                onClick={() => setActiveTab('settings')}
+                icon={Settings}
+                label="Settings"
+              />
             </div>
           </div>
 
@@ -536,6 +583,38 @@ export default function AdminDashboard() {
             {activeTab === 'analytics' && <AnalyticsView bookings={bookings} />}
             {activeTab === 'sms' && <SMSManager />}
             {activeTab === 'expenses' && <ExpenseTracker />}
+            {activeTab === 'settings' && (
+              <div className="max-w-2xl">
+                <h3 className="text-lg font-semibold mb-6">Notification Settings</h3>
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900">Send Owner Notifications</p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Receive email/SMS when a new booking is submitted
+                      </p>
+                    </div>
+                    <button
+                      onClick={toggleOwnerNotifications}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        sendOwnerNotifications ? 'bg-yellow-400' : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          sendOwnerNotifications ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  <div className="mt-4 p-3 bg-yellow-100 rounded-lg">
+                    <p className="text-sm text-yellow-800">
+                      <strong>Status:</strong> {sendOwnerNotifications ? 'ON - You will receive notifications' : 'OFF - No notifications will be sent'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
