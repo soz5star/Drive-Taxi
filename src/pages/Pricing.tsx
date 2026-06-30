@@ -6,15 +6,14 @@ import AnimatedButton from '../components/AnimatedButton';
 import AnimatedLink from '../components/AnimatedLink';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
-import SEO from '../components/SEO';
 
 export default function Pricing() {
   const routes = [
     {
       category: 'St Andrews ↔ Edinburgh Airport',
       journeys: [
-        { from: 'St Andrews', to: 'Edinburgh Airport', time: '80 mins', price: '£120' },
-        { from: 'Edinburgh Airport', to: 'St Andrews', time: '80 mins', price: '£130' },
+        { from: 'St Andrews', to: 'Edinburgh Airport', time: '80 mins', price: '£140' },
+        { from: 'Edinburgh Airport', to: 'St Andrews', time: '80 mins', price: '£150' },
       ],
     },
     {
@@ -27,27 +26,21 @@ export default function Pricing() {
     {
       category: 'Dundee ↔ Edinburgh Airport',
       journeys: [
-        { from: 'Dundee', to: 'Edinburgh Airport', time: '80 mins', price: '£130' },
-        { from: 'Edinburgh Airport', to: 'Dundee', time: '80 mins', price: '£140' },
+        { from: 'Dundee', to: 'Edinburgh Airport', time: '80 mins', price: '£140' },
+        { from: 'Edinburgh Airport', to: 'Dundee', time: '80 mins', price: '£150' },
       ],
     },
     {
       category: 'Dundee ↔ Glasgow Airport',
       journeys: [
-        { from: 'Dundee', to: 'Glasgow Airport', time: '120 mins', price: '£190' },
-        { from: 'Glasgow Airport', to: 'Dundee', time: '120 mins', price: '£170' },
+        { from: 'Dundee', to: 'Glasgow Airport', time: '120 mins', price: '£170' },
+        { from: 'Glasgow Airport', to: 'Dundee', time: '120 mins', price: '£190' },
       ],
     },
   ];
 
   return (
     <div>
-      <SEO
-        title="Taxi Prices St Andrews | Airport Transfer Costs | Drive Taxi"
-        description="Transparent taxi pricing from St Andrews. Edinburgh airport £120, Glasgow airport £190, Dundee from £50. Student discounts available. Get a free quote today."
-        canonical="https://drivetaxi.co.uk/pricing"
-        keywords="taxi prices St Andrews, airport transfer cost, Edinburgh taxi price, Glasgow taxi quote, St Andrews taxi rates"
-      />
       <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
