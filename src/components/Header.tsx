@@ -319,6 +319,15 @@ export default function Header() {
                 </motion.div>
                 <span>Call Now: 07470 856699</span>
               </motion.a>
+              
+              <motion.div variants={mobileItemVariants}>
+                <Link
+                  to="/admin/login"
+                  className="flex items-center justify-center text-xs text-gray-600 hover:text-gray-400 mt-3"
+                >
+                  Admin
+                </Link>
+              </motion.div>
             </motion.nav>
           )}
         </AnimatePresence>
