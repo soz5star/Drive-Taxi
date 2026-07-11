@@ -476,17 +476,17 @@ export default function Home() {
         <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
-            <AnimatedSection className="w-full">
+            <div className="w-full mb-2">
               <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 Ready to Book Your Journey?
               </h2>
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-300 leading-relaxed">
                 Get your free quote in minutes. No obligation, quick response guaranteed
               </p>
-            </AnimatedSection>
+            </div>
 
             <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 w-full"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 mt-6 w-full"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
