@@ -471,22 +471,22 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-black text-white relative overflow-hidden">
+      <section className="py-24 bg-black text-white relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <AnimatedSection>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
                 Ready to Book Your Journey?
               </h2>
-              <p className="text-xl text-gray-300 mb-8">
+              <p className="text-xl text-gray-300 mb-10 leading-relaxed">
                 Get your free quote in minutes. No obligation, quick response guaranteed
               </p>
             </AnimatedSection>
 
             <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -502,7 +502,7 @@ export default function Home() {
             </motion.div>
 
             <motion.p
-              className="mt-8 text-gray-400"
+              className="text-gray-400 text-lg"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
