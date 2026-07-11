@@ -62,7 +62,7 @@ export default function Book() {
 
     // UK phone validation
     if (formData.phone) {
-      const phoneRegex = /^(\+44|0)\s?\d{4}\s?\d{6}$/;
+      const phoneRegex = /^(\+44|0)\s?\d{4}\s?\d{5,6}$/;
       if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
         newErrors.phone = 'Please enter a valid UK phone number (e.g., 07123 456789)';
       }

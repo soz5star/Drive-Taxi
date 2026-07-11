@@ -312,13 +312,6 @@ export default function Footer() {
           <p className="text-sm text-gray-500">
             Available 24/7 by advance booking
           </p>
-          
-          <Link
-            to="/admin/login"
-            className="text-xs text-gray-700 hover:text-gray-500 transition-colors"
-          >
-            Admin
-          </Link>
         </motion.div>
       </motion.div>
 

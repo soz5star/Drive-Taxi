@@ -25,6 +25,7 @@ const StAndrewsToDundeeAirport = lazy(() => import('./pages/StAndrewsToDundeeAir
 const LeucharsTaxi = lazy(() => import('./pages/LeucharsTaxi'));
 const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Simple loading fallback
 const PageLoader = () => (
@@ -63,6 +64,7 @@ function AnimatedRoutes() {
           <Route path="/st-andrews-to-glasgow-airport" element={<PageTransition><StAndrewsToGlasgowAirport /></PageTransition>} />
           <Route path="/st-andrews-to-dundee-airport" element={<PageTransition><StAndrewsToDundeeAirport /></PageTransition>} />
           <Route path="/leuchars-taxi" element={<PageTransition><LeucharsTaxi /></PageTransition>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AnimatePresence>
     </Suspense>
