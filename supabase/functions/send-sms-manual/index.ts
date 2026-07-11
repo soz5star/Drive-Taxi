@@ -1,26 +1,53 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { createClient } from "jsr:@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
 
 interface ManualSMSData {
   phone: string;
   message: string;
 }
 
+/** Confirm the caller is a signed-in user (not just the public anon key). */
+async function requireAuthenticatedUser(req: Request): Promise<boolean> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) return false;
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    { global: { headers: { Authorization: authHeader } } }
+  );
+  const { data, error } = await supabase.auth.getUser();
+  return !error && !!data.user;
+}
+
 Deno.serve(async (req: Request) => {
+  const cors = corsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
-      headers: corsHeaders,
+      headers: cors,
     });
+  }
+
+  // Manual SMS is an admin-only action. Reject anything that isn't an
+  // authenticated user session — the public anon key is not enough.
+  if (!(await requireAuthenticatedUser(req))) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Unauthorized" }),
+      { status: 401, headers: { ...cors, "Content-Type": "application/json" } }
+    );
   }
 
   try {
     const data: ManualSMSData = await req.json();
+
+    if (!data.phone || !data.message) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Phone and message are required." }),
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
+      );
+    }
 
     const clickSendUsername = Deno.env.get("CLICKSEND_USERNAME");
     const clickSendApiKey = Deno.env.get("CLICKSEND_API_KEY");
@@ -29,14 +56,14 @@ Deno.serve(async (req: Request) => {
     if (!clickSendUsername || !clickSendApiKey) {
       console.error("ClickSend not configured");
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets." 
+        JSON.stringify({
+          success: false,
+          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets."
         }),
         {
           status: 500,
           headers: {
-            ...corsHeaders,
+            ...cors,
             "Content-Type": "application/json",
           },
         }
@@ -92,7 +119,7 @@ Deno.serve(async (req: Request) => {
       }),
       {
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }
@@ -104,7 +131,7 @@ Deno.serve(async (req: Request) => {
       {
         status: 500,
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }

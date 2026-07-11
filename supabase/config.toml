@@ -267,3 +267,19 @@ s3_region = ""
 s3_access_key = ""
 # Configures S3 bucket secret key
 s3_secret_key = ""
+
+# Edge functions. verify_jwt = true means Supabase rejects any request without
+# a valid JWT (the public anon key qualifies). The booking-triggered functions
+# rely on this plus origin-restricted CORS. send-sms-manual additionally checks
+# for a real authenticated USER session inside the function (admin-only action).
+[functions.send-customer-confirmation]
+verify_jwt = true
+
+[functions.send-owner-notification]
+verify_jwt = true
+
+[functions.send-sms-confirmation]
+verify_jwt = true
+
+[functions.send-sms-manual]
+verify_jwt = true

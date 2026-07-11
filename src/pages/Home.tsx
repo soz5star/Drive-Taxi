@@ -473,7 +473,6 @@ export default function Home() {
 
       <section className="py-24 bg-black text-white relative overflow-hidden">
         <ParticleBackground />
-        <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
             <div className="w-full mb-2">

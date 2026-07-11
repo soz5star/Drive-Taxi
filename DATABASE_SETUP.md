@@ -116,8 +116,13 @@ psql -h your-host -U your-user -d your-database -f supabase/migrations/202512261
 ## Row Level Security (RLS)
 
 The database uses RLS policies:
-- **Anonymous users** can insert bookings (public booking form)
+- **Anonymous users** can insert bookings (public booking form) — INSERT only, no read access
 - **Authenticated users** can view/manage all tables (admin dashboard)
+
+> RLS is **enabled** on `bookings` (see `20260711000000_re_enable_rls_on_bookings.sql`).
+> An earlier migration disabled it; that has been reverted so customer PII in
+> `bookings` is not readable by the anonymous role. If you add new tables, enable
+> RLS on them too and grant `anon` only the access it genuinely needs.
 
 ## Troubleshooting
 

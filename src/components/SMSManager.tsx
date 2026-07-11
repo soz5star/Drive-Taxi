@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, Send, Settings, CheckCircle, XCircle, Phone, Clock } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface SMSTemplate {
   id: string;
@@ -51,23 +52,34 @@ export default function SMSManager() {
     }
   ]);
 
-  const [logs, setLogs] = useState<SMSLog[]>([
-    { id: '1', to: '+447470856699', message: 'Booking confirmed...', status: 'sent', timestamp: '2024-01-15 14:30' },
-    { id: '2', to: '+447123456789', message: 'Driver assigned...', status: 'sent', timestamp: '2024-01-15 13:15' },
-  ]);
+  // Session-only log of SMS sent from this screen. Not persisted to a backend
+  // yet, so it starts empty and clears on refresh (rather than showing fake rows).
+  const [logs, setLogs] = useState<SMSLog[]>([]);
 
   const handleSendSMS = async () => {
     if (!phoneNumber || !message) return;
     setSending(true);
-    
+
     try {
+      if (!supabase) {
+        alert('SMS service is not configured.');
+        return;
+      }
+
+      // Send the admin's own session token so the edge function can verify the
+      // caller is an authenticated user (not just anyone with the public key).
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Your session has expired. Please sign in again.');
+        return;
+      }
+
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
+
       const response = await fetch(`${supabaseUrl}/functions/v1/send-sms-manual`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
+          'Authorization': `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -252,8 +264,16 @@ export default function SMSManager() {
         >
           <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
             <p className="text-sm text-blue-800">
-              <strong>Auto SMS:</strong> When enabled, these messages are sent automatically based on booking status changes. 
+              <strong>Auto SMS:</strong> When enabled, these messages are sent automatically based on booking status changes.
               Placeholders like {'{name}'}, {'{pickup}'}, {'{driver}'} will be replaced with actual booking data.
+            </p>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+            <p className="text-sm text-amber-800">
+              <strong>Note:</strong> These template toggles are a preview only and are not yet
+              saved to the backend — they reset on refresh. Automatic booking SMS is currently
+              controlled by the <code>AUTO_SMS_ENABLED</code> Supabase secret.
             </p>
           </div>
 

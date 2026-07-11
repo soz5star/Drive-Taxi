@@ -1,10 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { corsHeaders, escapeHtml } from "../_shared/cors.ts";
 
 interface BookingData {
   name: string;
@@ -22,10 +17,12 @@ interface BookingData {
 }
 
 Deno.serve(async (req: Request) => {
+  const cors = corsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
-      headers: corsHeaders,
+      headers: cors,
     });
   }
 
@@ -34,14 +31,30 @@ Deno.serve(async (req: Request) => {
 
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const ownerEmail = Deno.env.get("OWNER_EMAIL");
-    
+
     if (!resendApiKey) {
       throw new Error("RESEND_API_KEY not configured");
     }
-    
+
     if (!ownerEmail) {
       throw new Error("OWNER_EMAIL not configured");
     }
+
+    // Escape all customer-supplied values before embedding them in HTML.
+    const b = {
+      name: escapeHtml(booking.name),
+      email: escapeHtml(booking.email),
+      phone: escapeHtml(booking.phone),
+      phoneRaw: encodeURIComponent(String(booking.phone ?? "").replace(/\s+/g, "")),
+      pickupLocation: escapeHtml(booking.pickupLocation),
+      dropoffLocation: escapeHtml(booking.dropoffLocation),
+      pickupDate: escapeHtml(booking.pickupDate),
+      pickupTime: escapeHtml(booking.pickupTime),
+      flightNumber: escapeHtml(booking.flightNumber),
+      passengers: escapeHtml(booking.passengers),
+      luggage: escapeHtml(booking.luggage),
+      notes: escapeHtml(booking.notes),
+    };
 
     const now = new Date();
     const pickupDateTime = new Date(`${booking.pickupDate}T${booking.pickupTime}`);
@@ -76,59 +89,59 @@ Deno.serve(async (req: Request) => {
             <h2>Customer Details:</h2>
             <div class="detail-row">
               <span class="label">Name:</span>
-              <span class="value">${booking.name}</span>
+              <span class="value">${b.name}</span>
             </div>
             <div class="detail-row">
               <span class="label">Phone:</span>
-              <span class="value"><a href="tel:${booking.phone}">${booking.phone}</a></span>
+              <span class="value"><a href="tel:${b.phone}">${b.phone}</a></span>
             </div>
             <div class="detail-row">
               <span class="label">Email:</span>
-              <span class="value"><a href="mailto:${booking.email}">${booking.email}</a></span>
+              <span class="value"><a href="mailto:${b.email}">${b.email}</a></span>
             </div>
-            
+
             <h2>Journey Details:</h2>
             <div class="detail-row">
               <span class="label">Pickup:</span>
-              <span class="value">${booking.pickupLocation}</span>
+              <span class="value">${b.pickupLocation}</span>
             </div>
             <div class="detail-row">
               <span class="label">Drop-off:</span>
-              <span class="value">${booking.dropoffLocation}</span>
+              <span class="value">${b.dropoffLocation}</span>
             </div>
             <div class="detail-row">
               <span class="label">Date & Time:</span>
-              <span class="value">${booking.pickupDate} at ${booking.pickupTime}</span>
+              <span class="value">${b.pickupDate} at ${b.pickupTime}</span>
             </div>
             ${booking.flightNumber ? `
             <div class="detail-row">
               <span class="label">Flight Number:</span>
-              <span class="value">${booking.flightNumber}</span>
+              <span class="value">${b.flightNumber}</span>
             </div>
             ` : ''}
             <div class="detail-row">
               <span class="label">Passengers:</span>
-              <span class="value">${booking.passengers}</span>
+              <span class="value">${b.passengers}</span>
             </div>
             <div class="detail-row">
               <span class="label">Luggage:</span>
-              <span class="value">${booking.luggage} items</span>
+              <span class="value">${b.luggage} items</span>
             </div>
-            
+
             ${booking.isStudent ? '<div class="student-badge">🎓 Student Discount (10% off)</div>' : ''}
-            
+
             ${booking.notes ? `
             <div class="detail-row">
               <span class="label">Special Requests:</span><br>
-              <span class="value">${booking.notes}</span>
+              <span class="value">${b.notes}</span>
             </div>
             ` : ''}
-            
+
             <div class="actions">
               <h3>Quick Actions:</h3>
-              <p><a href="tel:${booking.phone}">📞 Call Customer: ${booking.phone}</a></p>
-              <p><a href="https://wa.me/${booking.phone.replace(/\s+/g, '')}">💬 WhatsApp Customer</a></p>
-              <p><a href="mailto:${booking.email}">✉️ Email Customer</a></p>
+              <p><a href="tel:${b.phone}">📞 Call Customer: ${b.phone}</a></p>
+              <p><a href="https://wa.me/${b.phoneRaw}">💬 WhatsApp Customer</a></p>
+              <p><a href="mailto:${b.email}">✉️ Email Customer</a></p>
             </div>
           </div>
         </div>
@@ -136,7 +149,7 @@ Deno.serve(async (req: Request) => {
       </html>
     `;
 
-    const subject = isUrgent 
+    const subject = isUrgent
       ? `🚨 URGENT BOOKING - ${booking.name} - ${booking.pickupDate} ${booking.pickupTime}`
       : `New Booking Request - ${booking.name} - ${booking.pickupDate}`;
 
@@ -165,7 +178,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ success: true, data: result }),
       {
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }
@@ -177,7 +190,7 @@ Deno.serve(async (req: Request) => {
       {
         status: 500,
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }

@@ -12,7 +12,7 @@ export default function SEO({
   title, 
   description, 
   canonical = 'https://drivetaxi.co.uk',
-  ogImage = 'https://drivetaxi.co.uk/og-image.jpg',
+  ogImage = 'https://drivetaxi.co.uk/ford-grand-cmax.jpg',
   keywords = 'St Andrews taxi, airport transfer, taxi service Fife'
 }: SEOProps) {
   useEffect(() => {
