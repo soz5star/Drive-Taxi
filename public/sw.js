@@ -1,17 +1,11 @@
-const CACHE_NAME = 'drivetaxi-v2';
+const CACHE_NAME = 'drivetaxi-v3';
 const urlsToCache = [
-  '/',
-  '/book',
-  '/pricing',
-  '/airport-transfers',
-  '/student-discount',
-  '/contact',
-  '/faq',
-  '/st-andrews-to-edinburgh-airport',
-  '/st-andrews-to-glasgow-airport',
-  '/st-andrews-to-dundee-airport',
-  '/leuchars-taxi',
-  '/manifest.json'
+  '/favicon-32x32.png',
+  '/favicon-16x16.png',
+  '/apple-touch-icon.png',
+  '/og-image.jpg',
+  '/icon-192x192.png',
+  '/icon-512x512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -22,6 +16,14 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Don't cache HTML pages - always fetch fresh
+  if (event.request.mode === 'navigate' || 
+      event.request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Cache other assets (images, fonts, etc.)
   event.respondWith(
     caches.match(event.request)
       .then(response => {
