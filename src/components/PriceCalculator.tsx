@@ -2,31 +2,13 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calculator, MapPin, Users, Package, ArrowRight, PoundSterling } from 'lucide-react';
 import AnimatedButton from './AnimatedButton';
+import { estimatePrice } from '../data/pricing';
 
 interface PriceEstimate {
   min: number;
   max: number;
   route: string;
 }
-
-const routeDatabase: Record<string, { base: number; min: number; max: number }> = {
-  'St Andrews-Edinburgh Airport': { base: 120, min: 110, max: 140 },
-  'Edinburgh Airport-St Andrews': { base: 130, min: 120, max: 150 },
-  'St Andrews-Dundee Airport': { base: 50, min: 45, max: 65 },
-  'Dundee Airport-St Andrews': { base: 50, min: 45, max: 65 },
-  'Dundee-Edinburgh Airport': { base: 130, min: 120, max: 150 },
-  'Edinburgh Airport-Dundee': { base: 140, min: 130, max: 160 },
-  'Dundee-Glasgow Airport': { base: 180, min: 170, max: 210 },
-  'Glasgow Airport-Dundee': { base: 170, min: 160, max: 200 },
-  'St Andrews-Glasgow Airport': { base: 200, min: 190, max: 240 },
-  'Glasgow Airport-St Andrews': { base: 210, min: 200, max: 250 },
-  'St Andrews-Dundee': { base: 40, min: 35, max: 55 },
-  'Dundee-St Andrews': { base: 40, min: 35, max: 55 },
-  'St Andrews-Edinburgh': { base: 110, min: 100, max: 130 },
-  'Edinburgh-St Andrews': { base: 120, min: 110, max: 140 },
-  'Dundee-Edinburgh': { base: 120, min: 110, max: 140 },
-  'Edinburgh-Dundee': { base: 130, min: 120, max: 150 },
-};
 
 const locations = [
   'St Andrews',
@@ -43,45 +25,24 @@ export default function PriceCalculator() {
   const [passengers, setPassengers] = useState(1);
   const [luggage, setLuggage] = useState(1);
   const [estimate, setEstimate] = useState<PriceEstimate | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isStudent, setIsStudent] = useState(false);
 
   const calculatePrice = () => {
     if (!pickup || !dropoff) return;
 
-    const routeKey1 = `${pickup}-${dropoff}`;
-    const routeKey2 = `${dropoff}-${pickup}`;
-    
-    let routeData = routeDatabase[routeKey1] || routeDatabase[routeKey2];
-    
-    if (!routeData) {
-      // Estimate for unknown routes based on typical rates
-      routeData = { base: 100, min: 90, max: 130 };
+    if (pickup === dropoff) {
+      setEstimate(null);
+      setError('Pickup and drop-off locations must be different.');
+      return;
     }
 
-    let minPrice = routeData.min;
-    let maxPrice = routeData.max;
-
-    // Adjust for passengers (no extra for 1-4, small increase for 5+)
-    if (passengers > 4) {
-      minPrice += 10;
-      maxPrice += 15;
-    }
-
-    // Adjust for excess luggage
-    if (luggage > 3) {
-      minPrice += 5 * (luggage - 3);
-      maxPrice += 8 * (luggage - 3);
-    }
-
-    // Apply student discount
-    if (isStudent) {
-      minPrice = Math.round(minPrice * 0.9);
-      maxPrice = Math.round(maxPrice * 0.9);
-    }
+    setError(null);
+    const { min, max } = estimatePrice(pickup, dropoff, { passengers, luggage, isStudent });
 
     setEstimate({
-      min: minPrice,
-      max: maxPrice,
+      min,
+      max,
       route: `${pickup} to ${dropoff}`,
     });
   };
@@ -208,6 +169,10 @@ export default function PriceCalculator() {
         <span>Get Price Estimate</span>
         <ArrowRight className="h-5 w-5" />
       </motion.button>
+
+      {error && (
+        <p className="mt-4 text-sm text-red-600 text-center" role="alert">{error}</p>
+      )}
 
       {estimate && (
         <motion.div

@@ -6,35 +6,48 @@ import AnimatedButton from '../components/AnimatedButton';
 import AnimatedLink from '../components/AnimatedLink';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
+import { getRoutePrice } from '../data/pricing';
 
 export default function Pricing() {
+  // Build the rate card from the shared pricing source so these numbers always
+  // match the calculator and the individual route pages.
+  const fare = (from: string, to: string) => {
+    const r = getRoutePrice(from, to);
+    return {
+      from,
+      to,
+      time: r ? `${r.minutes} mins` : '—',
+      price: r ? `£${r.price}` : 'On request',
+    };
+  };
+
   const routes = [
     {
       category: 'St Andrews ↔ Edinburgh Airport',
       journeys: [
-        { from: 'St Andrews', to: 'Edinburgh Airport', time: '80 mins', price: '£140' },
-        { from: 'Edinburgh Airport', to: 'St Andrews', time: '80 mins', price: '£150' },
+        fare('St Andrews', 'Edinburgh Airport'),
+        fare('Edinburgh Airport', 'St Andrews'),
+      ],
+    },
+    {
+      category: 'St Andrews ↔ Glasgow Airport',
+      journeys: [
+        fare('St Andrews', 'Glasgow Airport'),
+        fare('Glasgow Airport', 'St Andrews'),
       ],
     },
     {
       category: 'St Andrews ↔ Dundee Airport',
       journeys: [
-        { from: 'St Andrews', to: 'Dundee Airport', time: '30 mins', price: '£50' },
-        { from: 'Dundee Airport', to: 'St Andrews', time: '30 mins', price: '£50' },
-      ],
-    },
-    {
-      category: 'Dundee ↔ Edinburgh Airport',
-      journeys: [
-        { from: 'Dundee', to: 'Edinburgh Airport', time: '80 mins', price: '£140' },
-        { from: 'Edinburgh Airport', to: 'Dundee', time: '80 mins', price: '£150' },
+        fare('St Andrews', 'Dundee Airport'),
+        fare('Dundee Airport', 'St Andrews'),
       ],
     },
     {
       category: 'Dundee ↔ Glasgow Airport',
       journeys: [
-        { from: 'Dundee', to: 'Glasgow Airport', time: '120 mins', price: '£170' },
-        { from: 'Glasgow Airport', to: 'Dundee', time: '120 mins', price: '£190' },
+        fare('Dundee', 'Glasgow Airport'),
+        fare('Glasgow Airport', 'Dundee'),
       ],
     },
   ];

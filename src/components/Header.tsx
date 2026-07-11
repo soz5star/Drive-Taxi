@@ -137,15 +137,15 @@ export default function Header() {
               <Phone className="h-6 w-6 text-black relative z-10" />
             </motion.div>
             <div>
-              <motion.h1 
+              <motion.p
                 className="text-2xl font-bold"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
               >
                 <span className="text-yellow-400">Drive</span> Taxi
-              </motion.h1>
-              <motion.p 
+              </motion.p>
+              <motion.p
                 className="text-xs text-gray-400"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -235,6 +235,9 @@ export default function Header() {
           <motion.button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav"
             whileTap={{ scale: 0.9 }}
           >
             <AnimatePresence mode="wait">
@@ -268,6 +271,7 @@ export default function Header() {
           {mobileMenuOpen && (
             <motion.nav
               className="lg:hidden pb-6 overflow-hidden"
+              id="mobile-nav"
               variants={mobileMenuVariants}
               initial="hidden"
               animate="visible"

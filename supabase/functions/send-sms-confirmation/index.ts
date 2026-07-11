@@ -1,10 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { corsHeaders } from "../_shared/cors.ts";
 
 interface SMSData {
   phone: string;
@@ -16,15 +11,24 @@ interface SMSData {
 }
 
 Deno.serve(async (req: Request) => {
+  const cors = corsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
-      headers: corsHeaders,
+      headers: cors,
     });
   }
 
   try {
     const data: SMSData = await req.json();
+
+    if (!data.phone || !data.name) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Phone and name are required." }),
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
+      );
+    }
 
     const clickSendUsername = Deno.env.get("CLICKSEND_USERNAME");
     const clickSendApiKey = Deno.env.get("CLICKSEND_API_KEY");
@@ -37,7 +41,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ success: true, skipped: true, reason: "Auto-SMS disabled" }),
         {
           headers: {
-            ...corsHeaders,
+            ...cors,
             "Content-Type": "application/json",
           },
         }
@@ -47,14 +51,14 @@ Deno.serve(async (req: Request) => {
     if (!clickSendUsername || !clickSendApiKey) {
       console.error("ClickSend not configured");
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets." 
+        JSON.stringify({
+          success: false,
+          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets."
         }),
         {
           status: 500,
           headers: {
-            ...corsHeaders,
+            ...cors,
             "Content-Type": "application/json",
           },
         }
@@ -113,7 +117,7 @@ Deno.serve(async (req: Request) => {
       }),
       {
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }
@@ -125,7 +129,7 @@ Deno.serve(async (req: Request) => {
       {
         status: 500,
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }

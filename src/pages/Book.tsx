@@ -40,16 +40,42 @@ export default function Book() {
     }
   };
 
+  // Today's date as YYYY-MM-DD (local) for the date input's min attribute
+  const todayStr = (() => {
+    const d = new Date();
+    const offset = d.getTimezoneOffset() * 60000;
+    return new Date(d.getTime() - offset).toISOString().split('T')[0];
+  })();
+
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Check pickup date not in past
-    if (formData.pickupDate) {
-      const selectedDate = new Date(formData.pickupDate);
+    // Required-field backstop (in case native validation is bypassed)
+    if (!formData.name.trim()) newErrors.name = 'Please enter your name';
+    if (!formData.phone.trim()) newErrors.phone = 'Please enter your phone number';
+    if (!formData.pickupLocation.trim()) newErrors.pickupLocation = 'Please enter a pickup location';
+    if (!formData.dropoffLocation.trim()) newErrors.dropoffLocation = 'Please enter a drop-off location';
+    if (!formData.pickupDate) newErrors.pickupDate = 'Please choose a pickup date';
+    if (!formData.pickupTime) newErrors.pickupTime = 'Please choose a pickup time';
+
+    // Check pickup date not in past (parse as local midnight to avoid TZ drift)
+    if (formData.pickupDate && !newErrors.pickupDate) {
+      const [y, m, d] = formData.pickupDate.split('-').map(Number);
+      const selectedDate = new Date(y, m - 1, d);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (selectedDate < today) {
         newErrors.pickupDate = 'Pickup date cannot be in the past';
+      } else if (
+        // Same-day booking: make sure the time isn't already in the past
+        selectedDate.getTime() === today.getTime() &&
+        formData.pickupTime
+      ) {
+        const [hh, mm] = formData.pickupTime.split(':').map(Number);
+        const pickupDateTime = new Date(y, m - 1, d, hh, mm);
+        if (pickupDateTime.getTime() < Date.now()) {
+          newErrors.pickupTime = 'Pickup time cannot be in the past';
+        }
       }
     }
 
@@ -92,11 +118,12 @@ export default function Book() {
     }
 
     try {
-      // Check if supabase is configured
+      // If the backend isn't configured, do NOT pretend the booking succeeded.
+      // Silently "succeeding" here would lose the booking entirely. Surface an
+      // error so the customer falls back to calling/WhatsApp.
       if (!supabase) {
-        console.warn('Supabase is not configured. Falling back to local success state for demo purposes.');
-        // In a real app, you might want to show an error or use an alternative booking method
-        setSubmitStatus('success');
+        console.error('Supabase is not configured — booking cannot be stored.');
+        setSubmitStatus('error');
         return;
       }
 
@@ -153,7 +180,7 @@ export default function Book() {
           if (settingsData) {
             sendOwnerNotification = settingsData.value;
           }
-        } catch (error) {
+        } catch {
           console.warn('Could not fetch notification settings, defaulting to enabled');
         }
 
@@ -269,6 +296,8 @@ export default function Book() {
                 <AnimatedCard className="mb-8 bg-green-50 border-2 border-green-400 p-6" hoverEffect={false}>
                   <motion.div
                     className="flex items-start space-x-4"
+                    role="alert"
+                    aria-live="assertive"
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4 }}
@@ -292,9 +321,30 @@ export default function Book() {
 
             {submitStatus === 'error' && (
               <AnimatedCard className="mb-8 bg-red-50 border-2 border-red-400 p-6" hoverEffect={false}>
-                <div className="text-red-600 text-lg">
-                  <p className="font-bold mb-2">Submission Failed</p>
-                  <p>Sorry, there was an error submitting your booking. Please try again or contact us directly.</p>
+                <div className="text-red-700 text-lg" role="alert" aria-live="assertive">
+                  <p className="font-bold mb-2">We couldn't submit your booking</p>
+                  <p className="mb-4">
+                    Sorry, something went wrong sending your request. Please don't worry —
+                    you can reach us directly and we'll sort your journey right away:
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <a
+                      href="tel:+447470856699"
+                      className="inline-flex items-center justify-center gap-2 bg-black text-white px-5 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                    >
+                      <Phone className="h-5 w-5" />
+                      Call 07470 856699
+                    </a>
+                    <a
+                      href="https://wa.me/447470856699"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                    >
+                      <MessageSquare className="h-5 w-5" />
+                      WhatsApp Us
+                    </a>
+                  </div>
                 </div>
               </AnimatedCard>
             )}
@@ -325,11 +375,16 @@ export default function Book() {
                         name="name"
                         required
                         aria-required="true"
+                        aria-invalid={!!errors.name}
+                        aria-describedby={errors.name ? "name-error" : undefined}
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                         placeholder="John Smith"
                       />
+                      {errors.name && (
+                        <p id="name-error" className="mt-1 text-sm text-red-600">{errors.name}</p>
+                      )}
                     </div>
 
                     <div>
@@ -402,11 +457,16 @@ export default function Book() {
                           name="pickupLocation"
                           required
                           aria-required="true"
+                          aria-invalid={!!errors.pickupLocation}
+                          aria-describedby={errors.pickupLocation ? "pickupLocation-error" : undefined}
                           value={formData.pickupLocation}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.pickupLocation ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                           placeholder="e.g. St Andrews University"
                         />
+                        {errors.pickupLocation && (
+                          <p id="pickupLocation-error" className="mt-1 text-sm text-red-600">{errors.pickupLocation}</p>
+                        )}
                       </div>
                     </div>
 
@@ -454,6 +514,7 @@ export default function Book() {
                           id="pickupDate"
                           name="pickupDate"
                           required
+                          min={todayStr}
                           aria-required="true"
                           aria-invalid={!!errors.pickupDate}
                           aria-describedby={errors.pickupDate ? "pickupDate-error" : undefined}
@@ -479,10 +540,15 @@ export default function Book() {
                           name="pickupTime"
                           required
                           aria-required="true"
+                          aria-invalid={!!errors.pickupTime}
+                          aria-describedby={errors.pickupTime ? "pickupTime-error" : undefined}
                           value={formData.pickupTime}
                           onChange={handleChange}
-                          className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all"
+                          className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none transition-all ${errors.pickupTime ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-yellow-400'}`}
                         />
+                        {errors.pickupTime && (
+                          <p id="pickupTime-error" className="mt-1 text-sm text-red-600">{errors.pickupTime}</p>
+                        )}
                       </div>
                     </div>
                   </motion.div>

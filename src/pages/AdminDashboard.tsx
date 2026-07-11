@@ -255,6 +255,8 @@ export default function AdminDashboard() {
 
   const updatePrice = async (bookingId: string, price: number) => {
     if (!supabase) return;
+    // Guard against NaN (e.g. an empty/cleared price field) reaching the DB.
+    if (!Number.isFinite(price) || price < 0) return;
     try {
       const { error } = await supabase
         .from('bookings')

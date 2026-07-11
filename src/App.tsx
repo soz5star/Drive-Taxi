@@ -11,6 +11,7 @@ import StickyBookingCTA from './components/StickyBookingCTA';
 import { ToastProvider } from './components/Toast';
 import Home from './pages/Home';
 import ErrorBoundary from './components/ErrorBoundary';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Lazy load non-critical pages
 const AirportTransfers = lazy(() => import('./pages/AirportTransfers'));
@@ -43,7 +44,7 @@ function AnimatedRoutes() {
       <Suspense fallback={<PageLoader />}>
         <Routes location={location} key={location.pathname}>
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<ErrorBoundary><AdminDashboard /></ErrorBoundary>} />
+          <Route path="/admin/dashboard" element={<ProtectedRoute><ErrorBoundary><AdminDashboard /></ErrorBoundary></ProtectedRoute>} />
         </Routes>
       </Suspense>
     );

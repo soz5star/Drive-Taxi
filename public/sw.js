@@ -1,17 +1,17 @@
-const CACHE_NAME = 'drivetaxi-v3';
+const CACHE_NAME = 'drivetaxi-v4';
+// Only precache assets we know exist. addAll() rejects the whole install if any
+// single URL 404s, so we also cache individually and ignore failures.
 const urlsToCache = [
-  '/favicon-32x32.png',
-  '/favicon-16x16.png',
-  '/apple-touch-icon.png',
-  '/og-image.jpg',
-  '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/ford-grand-cmax.jpg',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+    caches.open(CACHE_NAME).then(cache =>
+      // Cache each URL independently so one missing file can't abort install.
+      Promise.allSettled(urlsToCache.map(url => cache.add(url)))
+    )
   );
 });
 

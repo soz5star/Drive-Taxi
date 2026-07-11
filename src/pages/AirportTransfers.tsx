@@ -197,7 +197,6 @@ export default function AirportTransfers() {
 
       <section className="py-16 bg-black text-white relative overflow-hidden">
         <ParticleBackground />
-        <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <AnimatedSection>

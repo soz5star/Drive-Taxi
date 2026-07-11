@@ -1,10 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
-};
+import { corsHeaders, escapeHtml } from "../_shared/cors.ts";
 
 interface BookingData {
   name: string;
@@ -22,20 +17,44 @@ interface BookingData {
 }
 
 Deno.serve(async (req: Request) => {
+  const cors = corsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
-      headers: corsHeaders,
+      headers: cors,
     });
   }
 
   try {
     const booking: BookingData = await req.json();
 
+    if (!booking.email) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Customer email is required." }),
+        { status: 400, headers: { ...cors, "Content-Type": "application/json" } }
+      );
+    }
+
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
       throw new Error("RESEND_API_KEY not configured");
     }
+
+    // Escape all customer-supplied values before embedding them in HTML.
+    const b = {
+      name: escapeHtml(booking.name),
+      phone: escapeHtml(booking.phone),
+      pickupLocation: escapeHtml(booking.pickupLocation),
+      dropoffLocation: escapeHtml(booking.dropoffLocation),
+      pickupDate: escapeHtml(booking.pickupDate),
+      pickupTime: escapeHtml(booking.pickupTime),
+      flightNumber: escapeHtml(booking.flightNumber),
+      passengers: escapeHtml(booking.passengers),
+      luggage: escapeHtml(booking.luggage),
+      notes: escapeHtml(booking.notes),
+      phoneRef: escapeHtml(String(booking.phone ?? "").slice(-4)),
+    };
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -290,11 +309,11 @@ Deno.serve(async (req: Request) => {
           <div class="header">
             <div class="checkmark">✓</div>
             <h1>Booking Request Received!</h1>
-            <p>Reference: #${booking.phone.slice(-4)}-${new Date().getTime().toString().slice(-4)}</p>
+            <p>Reference: #${b.phoneRef}-${new Date().getTime().toString().slice(-4)}</p>
           </div>
 
           <div class="content">
-            <div class="greeting">Hi ${booking.name},</div>
+            <div class="greeting">Hi ${b.name},</div>
             <div class="message">
               Thank you for choosing Drive Taxi. We've received your booking request. Please note this is an estimated price based on the details provided. Our team will contact you to confirm all details and provide your final quote.
             </div>
@@ -305,14 +324,14 @@ Deno.serve(async (req: Request) => {
                 <div class="location-icon icon-pickup">📍</div>
                 <div class="location-details">
                   <h4>Pickup Location</h4>
-                  <p>${booking.pickupLocation}</p>
+                  <p>${b.pickupLocation}</p>
                 </div>
               </div>
               <div class="location-row">
                 <div class="location-icon icon-dropoff">🎯</div>
                 <div class="location-details">
                   <h4>Drop-off Location</h4>
-                  <p>${booking.dropoffLocation}</p>
+                  <p>${b.dropoffLocation}</p>
                 </div>
               </div>
             </div>
@@ -320,26 +339,26 @@ Deno.serve(async (req: Request) => {
             <div class="detail-grid">
               <div class="detail-item">
                 <div class="detail-label">📅 Pickup Date</div>
-                <div class="detail-value">${booking.pickupDate}</div>
+                <div class="detail-value">${b.pickupDate}</div>
               </div>
               <div class="detail-item">
                 <div class="detail-label">🕐 Pickup Time</div>
-                <div class="detail-value">${booking.pickupTime}</div>
+                <div class="detail-value">${b.pickupTime}</div>
               </div>
               <div class="detail-item">
                 <div class="detail-label">👥 Passengers</div>
-                <div class="detail-value">${booking.passengers} ${booking.passengers === 1 ? 'person' : 'people'}</div>
+                <div class="detail-value">${b.passengers} ${booking.passengers === 1 ? 'person' : 'people'}</div>
               </div>
               <div class="detail-item">
                 <div class="detail-label">🧳 Luggage</div>
-                <div class="detail-value">${booking.luggage} ${booking.luggage === 1 ? 'item' : 'items'}</div>
+                <div class="detail-value">${b.luggage} ${booking.luggage === 1 ? 'item' : 'items'}</div>
               </div>
             </div>
 
             ${booking.flightNumber ? `
             <div class="detail-item" style="margin-bottom: 20px;">
               <div class="detail-label">✈️ Flight Number</div>
-              <div class="detail-value">${booking.flightNumber}</div>
+              <div class="detail-value">${b.flightNumber}</div>
             </div>
             ` : ''}
 
@@ -352,13 +371,13 @@ Deno.serve(async (req: Request) => {
             ${booking.notes ? `
             <div class="notes-box">
               <strong>💬 Your Special Requests</strong>
-              <p>${booking.notes}</p>
+              <p>${b.notes}</p>
             </div>
             ` : ''}
 
             <div class="cta-box">
               <p>We'll contact you shortly on:</p>
-              <strong>📞 ${booking.phone}</strong>
+              <strong>📞 ${b.phone}</strong>
               <p style="font-size: 13px; margin-top: 12px;">Need to reach us first?</p>
               <a href="tel:07470856699" class="contact-button">Call Us: 07470 856699</a>
             </div>
@@ -411,7 +430,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ success: true, data: result }),
       {
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }
@@ -423,7 +442,7 @@ Deno.serve(async (req: Request) => {
       {
         status: 500,
         headers: {
-          ...corsHeaders,
+          ...cors,
           "Content-Type": "application/json",
         },
       }

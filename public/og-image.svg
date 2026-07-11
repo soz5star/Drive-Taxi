@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#000000"/>
+      <stop offset="0.5" stop-color="#1f2937"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="80" y="250" width="120" height="120" rx="24" fill="#FACC15"/>
+  <text x="140" y="310" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700" text-anchor="middle" fill="#000" dy="0.35em">DT</text>
+  <text x="240" y="270" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" fill="#ffffff">Drive Taxi</text>
+  <text x="240" y="345" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="500" fill="#FACC15">St Andrews Airport Transfers</text>
+  <text x="80" y="470" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#d1d5db">Edinburgh · Glasgow · Dundee Airports</text>
+  <text x="80" y="525" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#d1d5db">24/7 service · Student discounts · Call 07470 856699</text>
+</svg>
