@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ReactNode, useRef } from 'react';
 
@@ -332,7 +332,7 @@ export function IconButton({
       `}
       initial={{ width: 48 }}
       whileHover={{ width: 'auto' }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] as const }}
     >
       <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
         {icon}

@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion';
-import { Shield, Clock, MapPin, Users, Award, Star, CheckCircle, Zap } from 'lucide-react';
+import { Shield, Clock, MapPin, Users, Award, Star, CheckCircle } from 'lucide-react';
 import { useRef } from 'react';
 
 interface TrustBadgesProps {
@@ -36,7 +36,7 @@ export default function TrustBadges({ variant = 'default' }: TrustBadgesProps) {
       scale: 1,
       transition: {
         duration: 0.5,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }
     }
   };

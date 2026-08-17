@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Train, Clock, MapPin, CheckCircle, Phone, ArrowRight, Users, Luggage } from 'lucide-react';
+import { Train, Clock, Phone, ArrowRight, Users, Luggage } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';

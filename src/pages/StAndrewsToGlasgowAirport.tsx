@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Plane, Clock, MapPin, CheckCircle, Phone, ArrowRight, Luggage, Shield } from 'lucide-react';
+import { Clock, MapPin, CheckCircle, Phone, ArrowRight, Luggage, Shield } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';

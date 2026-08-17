@@ -68,7 +68,7 @@ export default function AnimatedButton({
   const hoverAnimation = disabled ? {} : {
     scale: 1.03,
     boxShadow: `0 0 30px ${activeGlow}`,
-    transition: { duration: 0.2, ease: 'easeOut' }
+    transition: { duration: 0.2, ease: 'easeOut' as const }
   };
 
   const tapAnimation = disabled ? {} : {

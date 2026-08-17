@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ReactNode } from 'react';
 
+const CUBIC_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 interface PageTransitionProps {
   children: ReactNode;
   variant?: 'fade' | 'slide' | 'scale' | 'slideUp' | 'reveal' | 'curtain';
@@ -11,31 +13,31 @@ const variants = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+    transition: { duration: 0.4, ease: CUBIC_EASE }
   },
   slide: {
     initial: { opacity: 0, x: 60 },
     animate: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -60 },
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    transition: { duration: 0.5, ease: CUBIC_EASE }
   },
   scale: {
     initial: { opacity: 0, scale: 0.95 },
     animate: { opacity: 1, scale: 1 },
     exit: { opacity: 0, scale: 1.05 },
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
+    transition: { duration: 0.4, ease: CUBIC_EASE }
   },
   slideUp: {
     initial: { opacity: 0, y: 40 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -40 },
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    transition: { duration: 0.5, ease: CUBIC_EASE }
   },
   reveal: {
     initial: { opacity: 0, y: 20, filter: 'blur(10px)' },
     animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
     exit: { opacity: 0, y: -20, filter: 'blur(10px)' },
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    transition: { duration: 0.5, ease: CUBIC_EASE }
   },
   curtain: {
     initial: { opacity: 0 },
@@ -59,7 +61,7 @@ export default function PageTransition({
           initial={{ scaleX: 1 }}
           animate={{ scaleX: 0 }}
           exit={{ scaleX: 1 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: CUBIC_EASE }}
         />
         <motion.div
           initial={{ opacity: 0 }}
@@ -98,7 +100,7 @@ export function PageLoader({ isLoading }: PageLoaderProps) {
           className="fixed inset-0 bg-black z-50 flex items-center justify-center"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.5, ease: CUBIC_EASE }}
         >
           <motion.div
             className="flex flex-col items-center"
@@ -199,7 +201,7 @@ export function SectionTransition({
       transition={{
         duration: 0.7,
         delay,
-        ease: [0.22, 1, 0.36, 1]
+        ease: CUBIC_EASE
       }}
     >
       {children}
@@ -258,7 +260,7 @@ export function StaggerItem({ children, className = '' }: StaggerItemProps) {
           y: 0,
           transition: {
             duration: 0.5,
-            ease: [0.22, 1, 0.36, 1]
+            ease: CUBIC_EASE
           }
         }
       }}
@@ -286,7 +288,7 @@ export function RevealOnScroll({
         initial={{ opacity: 0, y: 75 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, ease: CUBIC_EASE }}
       >
         {children}
       </motion.div>
@@ -295,7 +297,7 @@ export function RevealOnScroll({
         initial={{ left: 0 }}
         whileInView={{ left: '100%' }}
         viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, ease: CUBIC_EASE }}
       />
     </div>
   );

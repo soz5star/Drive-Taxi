@@ -216,7 +216,7 @@ export function SimpleAnimatedIcon({
 }: SimpleAnimatedIconProps) {
   const getAnimation = () => {
     if (variant === 'none') return {};
-    return continuousVariants[variant]?.animate || {};
+    return (continuousVariants[variant]?.animate || {}) as any;
   };
 
   return (

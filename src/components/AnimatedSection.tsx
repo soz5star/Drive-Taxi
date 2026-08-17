@@ -340,16 +340,6 @@ export function MaskReveal({
   delay = 0,
   direction = 'left'
 }: MaskRevealProps) {
-  const getMaskAnimation = () => {
-    switch (direction) {
-      case 'left': return { left: ['0%', '100%'] };
-      case 'right': return { right: ['0%', '100%'] };
-      case 'up': return { top: ['0%', '100%'] };
-      case 'down': return { bottom: ['0%', '100%'] };
-      default: return { left: ['0%', '100%'] };
-    }
-  };
-
   return (
     <div className={`relative overflow-hidden ${className}`}>
       <motion.div
@@ -368,7 +358,7 @@ export function MaskReveal({
         transition={{
           duration: 0.6,
           delay,
-          ease: [0.22, 1, 0.36, 1]
+          ease: [0.22, 1, 0.36, 1] as const
         }}
         style={{
           [direction]: 0

@@ -49,7 +49,7 @@ export default function HowItWorks({ variant = 'default' }: HowItWorksProps) {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: [0.22, 1, 0.36, 1]
+        ease: [0.22, 1, 0.36, 1] as const
       }
     }
   };
@@ -60,7 +60,7 @@ export default function HowItWorks({ variant = 'default' }: HowItWorksProps) {
       scaleX: 1,
       transition: {
         duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const,
         delay: 0.5
       }
     }
@@ -180,7 +180,7 @@ export default function HowItWorks({ variant = 'default' }: HowItWorksProps) {
           className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 -translate-y-1/2 hidden md:block"
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] as const }}
           style={{ originX: 0 }}
         />
 

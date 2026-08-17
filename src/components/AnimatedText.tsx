@@ -1,6 +1,8 @@
 import { motion, Variants } from 'framer-motion';
 import { ReactNode } from 'react';
 
+const CUBIC_EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 interface AnimatedTextProps {
   text: string;
   className?: string;
@@ -29,7 +31,7 @@ const wordVariants: Variants = {
     y: 0,
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1]
+      ease: CUBIC_EASE
     }
   }
 };
@@ -42,18 +44,7 @@ const characterVariants: Variants = {
     rotateX: 0,
     transition: {
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1]
-    }
-  }
-};
-
-const typewriterVariants: Variants = {
-  hidden: { opacity: 0, width: 0 },
-  visible: {
-    opacity: 1,
-    width: 'auto',
-    transition: {
-      duration: 0.05
+      ease: CUBIC_EASE
     }
   }
 };
@@ -66,7 +57,7 @@ const waveVariants: Variants = {
     transition: {
       delay: i * 0.05,
       duration: 0.5,
-      ease: [0.22, 1, 0.36, 1]
+      ease: CUBIC_EASE
     }
   })
 };
@@ -105,7 +96,7 @@ export default function AnimatedText({
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once }}
-        transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.6, delay, ease: CUBIC_EASE }}
       >
         <motion.span
           className="bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent bg-[length:200%_auto]"
@@ -279,7 +270,7 @@ export function AnimatedHeading({
       transition={{
         duration: 0.7,
         delay,
-        ease: [0.22, 1, 0.36, 1]
+        ease: CUBIC_EASE
       }}
     >
       <Tag className={className}>{children}</Tag>
@@ -308,7 +299,7 @@ export function AnimatedParagraph({
       transition={{
         duration: 0.6,
         delay,
-        ease: [0.22, 1, 0.36, 1]
+        ease: CUBIC_EASE
       }}
     >
       {children}
@@ -342,7 +333,7 @@ export function HighlightText({
           hidden: { width: 0 },
           visible: {
             width: '100%',
-            transition: { duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }
+            transition: { duration: 0.6, delay: 0.3, ease: CUBIC_EASE }
           }
         }}
       />
@@ -361,7 +352,7 @@ interface CountingNumberProps {
 
 export function CountingNumber({
   value,
-  duration = 2,
+  duration: _duration = 2,
   prefix = '',
   suffix = '',
   className = ''

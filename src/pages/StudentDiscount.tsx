@@ -18,10 +18,10 @@ export default function StudentDiscount() {
   ];
 
   const examples = [
-    { route: 'St Andrews → Edinburgh Airport', regular: '£120', student: '£108', saving: '£12' },
-    { route: 'Edinburgh Airport → St Andrews', regular: '£130', student: '£117', saving: '£13' },
+    { route: 'St Andrews → Edinburgh Airport', regular: '£140', student: '£126', saving: '£14' },
+    { route: 'Edinburgh Airport → St Andrews', regular: '£150', student: '£135', saving: '£15' },
     { route: 'St Andrews → Dundee Airport', regular: '£50', student: '£45', saving: '£5' },
-    { route: 'Dundee → Glasgow Airport', regular: '£190', student: '£171', saving: '£19' },
+    { route: 'Dundee → Glasgow Airport', regular: '£170', student: '£153', saving: '£17' },
   ];
 
   return (
