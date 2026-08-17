@@ -17,8 +17,8 @@ export interface RoutePrice {
 
 export const ROUTE_PRICES: RoutePrice[] = [
   // St Andrews ↔ Edinburgh Airport
-  { from: 'St Andrews', to: 'Edinburgh Airport', price: 120, minutes: 80 },
-  { from: 'Edinburgh Airport', to: 'St Andrews', price: 130, minutes: 80 },
+  { from: 'St Andrews', to: 'Edinburgh Airport', price: 140, minutes: 80 },
+  { from: 'Edinburgh Airport', to: 'St Andrews', price: 150, minutes: 80 },
   // St Andrews ↔ Glasgow Airport
   { from: 'St Andrews', to: 'Glasgow Airport', price: 190, minutes: 120 },
   { from: 'Glasgow Airport', to: 'St Andrews', price: 170, minutes: 120 },
@@ -32,11 +32,11 @@ export const ROUTE_PRICES: RoutePrice[] = [
   { from: 'St Andrews', to: 'Edinburgh', price: 110, minutes: 75 },
   { from: 'Edinburgh', to: 'St Andrews', price: 120, minutes: 75 },
   // Dundee ↔ Edinburgh Airport
-  { from: 'Dundee', to: 'Edinburgh Airport', price: 130, minutes: 80 },
-  { from: 'Edinburgh Airport', to: 'Dundee', price: 140, minutes: 80 },
+  { from: 'Dundee', to: 'Edinburgh Airport', price: 140, minutes: 80 },
+  { from: 'Edinburgh Airport', to: 'Dundee', price: 150, minutes: 80 },
   // Dundee ↔ Glasgow Airport
-  { from: 'Dundee', to: 'Glasgow Airport', price: 180, minutes: 120 },
-  { from: 'Glasgow Airport', to: 'Dundee', price: 170, minutes: 120 },
+  { from: 'Dundee', to: 'Glasgow Airport', price: 170, minutes: 120 },
+  { from: 'Glasgow Airport', to: 'Dundee', price: 190, minutes: 120 },
   // Leuchars Station
   { from: 'Leuchars Station', to: 'St Andrews', price: 15, minutes: 10 },
   { from: 'Leuchars Station', to: 'Dundee', price: 35, minutes: 20 },

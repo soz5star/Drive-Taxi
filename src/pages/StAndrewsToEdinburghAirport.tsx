@@ -22,7 +22,7 @@ export default function StAndrewsToEdinburghAirport() {
     },
     {
       q: 'What is the cost?',
-      a: 'Our standard rate is £120 from St Andrews to Edinburgh Airport. The return journey is £130.'
+      a: 'Our standard rate is £140 from St Andrews to Edinburgh Airport. The return journey is £150.'
     },
     {
       q: 'Do you track flights?',
@@ -33,8 +33,8 @@ export default function StAndrewsToEdinburghAirport() {
   return (
     <div>
       <SEO
-        title="St Andrews to Edinburgh Airport Taxi | £120 Transfer | Drive Taxi"
-        description="Reliable taxi from St Andrews to Edinburgh Airport. 80 min journey, £120 fixed price, flight tracking, meet & greet. 24/7 service. Book: 07470 856699"
+        title="St Andrews to Edinburgh Airport Taxi | £140 Transfer | Drive Taxi"
+        description="Reliable taxi from St Andrews to Edinburgh Airport. 80 min journey, £140 fixed price, flight tracking, meet & greet. 24/7 service. Book: 07470 856699"
         canonical="https://drivetaxi.co.uk/st-andrews-to-edinburgh-airport"
         keywords="St Andrews Edinburgh airport taxi, Edinburgh airport transfer, St Andrews to EDI, airport taxi Fife, Edinburgh airport shuttle"
       />
@@ -66,7 +66,7 @@ export default function StAndrewsToEdinburghAirport() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Reliable airport transfer in 80 minutes. Fixed price £120.
+              Reliable airport transfer in 80 minutes. Fixed price £140.
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -146,15 +146,15 @@ export default function StAndrewsToEdinburghAirport() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center pb-4 border-b border-gray-700">
                       <span>St Andrews → Edinburgh Airport</span>
-                      <span className="text-2xl font-bold text-yellow-400">£120</span>
+                      <span className="text-2xl font-bold text-yellow-400">£140</span>
                     </div>
                     <div className="flex justify-between items-center pb-4 border-b border-gray-700">
                       <span>Edinburgh Airport → St Andrews</span>
-                      <span className="text-2xl font-bold text-yellow-400">£130</span>
+                      <span className="text-2xl font-bold text-yellow-400">£150</span>
                     </div>
                     <div className="flex justify-between items-center text-sm text-gray-400">
                       <span>Student Discount (10% off)</span>
-                      <span>Save up to £13</span>
+                      <span>Save up to £15</span>
                     </div>
                   </div>
                   <AnimatedButton to="/book?pickup=St%20Andrews&dropoff=Edinburgh%20Airport" className="w-full mt-6">
