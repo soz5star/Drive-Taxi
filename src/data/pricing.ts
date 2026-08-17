@@ -1,7 +1,7 @@
 // Single source of truth for all route pricing shown across the site.
 //
 // These are the fixed one-way fares advertised on the dedicated route pages
-// (e.g. "St Andrews to Edinburgh Airport — £120"). The Pricing page and the
+// (e.g. "St Andrews to Edinburgh Airport — £140"). The Pricing page and the
 // Quick Price Estimate calculator both derive their numbers from this table so
 // a customer sees the same price wherever they land. If a fare changes, change
 // it here only.
