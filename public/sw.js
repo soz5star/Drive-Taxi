@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drivetaxi-v4';
+const CACHE_NAME = 'drivetaxi-v5';
 // Only precache assets we know exist. addAll() rejects the whole install if any
 // single URL 404s, so we also cache individually and ignore failures.
 const urlsToCache = [
