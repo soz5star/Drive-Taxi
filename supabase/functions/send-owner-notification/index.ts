@@ -161,7 +161,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         from: "St Andrews Taxis <bookings@drivetaxi.co.uk>",
-        to: ownerEmail,
+        to: ownerEmail.split(",").map((address) => address.trim()).filter(Boolean),
         subject: subject,
         html: emailHtml,
       }),
