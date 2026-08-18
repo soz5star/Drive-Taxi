@@ -46,7 +46,7 @@ export default function AirportTransfers() {
         canonical="https://drivetaxi.co.uk/airport-transfers"
         keywords="St Andrews airport transfer, Edinburgh airport taxi, Glasgow airport transfer, Dundee airport taxi, airport taxi Fife"
       />
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-14 md:py-20 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">

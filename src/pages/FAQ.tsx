@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, HelpCircle, MessageCircle } from 'lucide-react';
-import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/AnimatedButton';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
@@ -98,7 +97,7 @@ export default function FAQ() {
         {JSON.stringify(structuredData)}
       </script>
 
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-14 md:py-20 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">
@@ -123,12 +122,11 @@ export default function FAQ() {
         </div>
       </section>
 
-      <section className="py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Category Filter */}
-            <AnimatedSection>
-              <div className="flex flex-wrap gap-2 mb-8 justify-center">
+            <div className="flex flex-wrap gap-2 mb-8 justify-center">
                 <button
                   onClick={() => setActiveCategory('All')}
                   className={`px-4 py-2 rounded-full font-medium transition-all ${
@@ -152,8 +150,7 @@ export default function FAQ() {
                     {category}
                   </button>
                 ))}
-              </div>
-            </AnimatedSection>
+            </div>
 
             {/* FAQ Accordion */}
             <div className="space-y-4">
@@ -217,7 +214,7 @@ export default function FAQ() {
             >
               <h3 className="text-2xl font-bold mb-4">Still have questions?</h3>
               <p className="text-gray-600 mb-6">
-                Can\'t find the answer you\'re looking for? Reach out to us directly.
+                Can't find the answer you're looking for? Reach out to us directly.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <AnimatedButton href="tel:+447470856699" variant="secondary">

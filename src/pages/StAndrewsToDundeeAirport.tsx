@@ -39,7 +39,7 @@ export default function StAndrewsToDundeeAirport() {
         keywords="St Andrews Dundee airport taxi, Dundee airport transfer, St Andrews to DND, Dundee airport shuttle, quick airport taxi"
       />
       
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-14 md:py-20 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">

@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Phone, MessageCircle, Clock, Shield, MapPin, GraduationCap, Plane, Award, Star, Users, Luggage } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/AnimatedButton';
@@ -12,10 +12,6 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import SEO from '../components/SEO';
 
 export default function Home() {
-  const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
-
   const services = [
     {
       icon: Plane,
@@ -55,7 +51,7 @@ export default function Home() {
         canonical="https://drivetaxi.co.uk"
         keywords="St Andrews taxi, airport transfer Edinburgh, Glasgow airport taxi, Dundee taxi, Fife taxi service, student taxi discount"
       />
-      <section className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white py-20 md:py-28 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 overflow-hidden">
         <AnimatedBackground3D />
         <ParticleBackground />
 
@@ -63,10 +59,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(250,204,21,0.1),transparent_50%)]" />
         </div>
 
-        <motion.div
-          className="container mx-auto px-4 relative z-10"
-          style={{ y: heroY, opacity: heroOpacity }}
-        >
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
             {/* Left: Text */}
             <div className="text-center md:text-left">
@@ -177,10 +170,10 @@ export default function Home() {
               <div className="absolute -inset-1 bg-yellow-400/10 rounded-2xl blur-xl -z-10" />
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
+      <section className="py-12 md:py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <TrustBadges />
@@ -234,7 +227,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-14 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <AnimatedSection>
@@ -275,7 +268,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-14 md:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <AnimatedSection>
@@ -295,7 +288,7 @@ export default function Home() {
       </section>
 
       {/* Vehicle Showcase */}
-      <section className="py-20 bg-white">
+      <section className="py-14 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <AnimatedSection>
@@ -358,7 +351,7 @@ export default function Home() {
       </section>
 
       {/* Why Choose + Google Reviews Testimonials */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-14 md:py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <AnimatedSection>
@@ -471,7 +464,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-24 bg-black text-white relative overflow-hidden">
+      <section className="py-16 md:py-20 bg-black text-white relative overflow-hidden">
         <ParticleBackground />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
