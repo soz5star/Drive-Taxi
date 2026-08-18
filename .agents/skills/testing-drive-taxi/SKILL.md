@@ -1,0 +1,1 @@
+file://C:/Users/Administrator/repos/Drive-Taxi/.agents/skills/testing-drive-taxi/SKILL.md
