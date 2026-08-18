@@ -263,7 +263,7 @@ export default function Book() {
         canonical="https://drivetaxi.co.uk/book"
         keywords="book taxi St Andrews, taxi quote, airport transfer booking, St Andrews taxi online"
       />
-      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-black via-gray-900 to-black text-white py-14 md:py-20 relative overflow-hidden">
         <ParticleBackground />
         <AnimatedBackground3D />
         <div className="container mx-auto px-4 relative z-10">
@@ -361,8 +361,7 @@ export default function Book() {
                   <motion.div
                     className="grid md:grid-cols-2 gap-6"
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.2 }}
                   >
                     <div>
@@ -415,8 +414,7 @@ export default function Book() {
 
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 }}
                   >
                     <label className="block text-sm font-semibold mb-2" htmlFor="email">
@@ -441,8 +439,7 @@ export default function Book() {
                   <motion.div
                     className="grid md:grid-cols-2 gap-6"
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.4 }}
                   >
                     <div>
@@ -499,8 +496,7 @@ export default function Book() {
                   <motion.div
                     className="grid md:grid-cols-2 gap-6"
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.5 }}
                   >
                     <div>
@@ -556,8 +552,7 @@ export default function Book() {
                   <motion.div
                     className="grid md:grid-cols-3 gap-6"
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.6 }}
                   >
                     <div>
@@ -621,8 +616,7 @@ export default function Book() {
 
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.7 }}
                   >
                     <label htmlFor="isStudent" className="flex items-center space-x-3 cursor-pointer group">
@@ -647,8 +641,7 @@ export default function Book() {
 
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.8 }}
                   >
                     <label className="block text-sm font-semibold mb-2" htmlFor="notes">
@@ -670,8 +663,7 @@ export default function Book() {
 
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.9 }}
                   >
                     <button

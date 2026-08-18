@@ -114,7 +114,7 @@ export default function AnimatedCard({
         ref={ref}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-50px' }}
+        viewport={{ once: true, amount: 0.1, margin: '0px 0px -40px 0px' }}
         transition={{ duration: 0.3, delay }}
         className={`rounded-xl shadow-lg ${getVariantClasses()} ${className}`}
       >
@@ -126,9 +126,9 @@ export default function AnimatedCard({
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
+      viewport={{ once: true, amount: 0.1, margin: '0px 0px -40px 0px' }}
       transition={{
         duration: 0.6,
         delay,

@@ -15,10 +15,10 @@ interface AnimatedSectionProps {
 
 const getDirectionOffset = (direction: string) => {
   switch (direction) {
-    case 'up': return { y: 60, x: 0 };
-    case 'down': return { y: -60, x: 0 };
-    case 'left': return { x: 60, y: 0 };
-    case 'right': return { x: -60, y: 0 };
+    case 'up': return { y: 24, x: 0 };
+    case 'down': return { y: -24, x: 0 };
+    case 'left': return { x: 24, y: 0 };
+    case 'right': return { x: -24, y: 0 };
     default: return { x: 0, y: 0 };
   }
 };
@@ -70,7 +70,7 @@ export default function AnimatedSection({
   variant = 'fade',
   duration,
   once = true,
-  amount = 0.3
+  amount = 0.1
 }: AnimatedSectionProps) {
   const prefersReducedMotion = useReducedMotion();
   
@@ -80,7 +80,7 @@ export default function AnimatedSection({
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once, amount, margin: '-50px' }}
+        viewport={{ once, amount, margin: '0px 0px -40px 0px' }}
         transition={{ duration: 0.3, delay }}
         className={className}
       >
@@ -95,7 +95,7 @@ export default function AnimatedSection({
     <motion.div
       initial={config.initial}
       whileInView={config.animate}
-      viewport={{ once, amount, margin: '-50px' }}
+      viewport={{ once, amount, margin: '0px 0px -40px 0px' }}
       transition={{
         ...config.transition,
         delay,
