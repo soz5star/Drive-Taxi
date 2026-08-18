@@ -20,8 +20,8 @@ export default function AdminLogin() {
     try {
       await signIn(email, password);
       navigate('/admin/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to sign in');
     } finally {
       setIsLoading(false);
     }

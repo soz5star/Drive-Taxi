@@ -1,4 +1,4 @@
-import { motion, Variants } from 'framer-motion';
+import { motion, Target, Transition, Variants } from 'framer-motion';
 import { ReactNode } from 'react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
@@ -26,7 +26,7 @@ const getDirectionOffset = (direction: string) => {
 const getVariantConfig = (variant: string, direction: string) => {
   const offset = getDirectionOffset(direction);
   
-  const variants: Record<string, { initial: any; animate: any; transition: any }> = {
+  const variants: Record<string, { initial: Target; animate: Target; transition: Transition }> = {
     fade: {
       initial: { opacity: 0, ...offset },
       animate: { opacity: 1, x: 0, y: 0 },

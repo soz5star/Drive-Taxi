@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { ComponentType, useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -813,7 +813,14 @@ export default function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, icon: Icon, color }: any) {
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: ComponentType<{ className?: string }>;
+  color: string;
+}
+
+function StatCard({ title, value, icon: Icon, color }: StatCardProps) {
   return (
     <motion.div
       className="bg-white p-6 rounded-xl shadow-md border border-gray-100"
@@ -832,7 +839,14 @@ function StatCard({ title, value, icon: Icon, color }: any) {
   );
 }
 
-function TabButton({ active, onClick, icon: Icon, label }: any) {
+interface TabButtonProps {
+  active: boolean;
+  onClick: () => void;
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+}
+
+function TabButton({ active, onClick, icon: Icon, label }: TabButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -848,7 +862,7 @@ function TabButton({ active, onClick, icon: Icon, label }: any) {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: any = {
+  const colors: Record<string, string> = {
     pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
     confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
     completed: 'bg-green-100 text-green-800 border-green-200',
