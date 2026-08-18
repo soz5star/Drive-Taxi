@@ -8,6 +8,17 @@ import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
 import SEO from '../components/SEO';
 
+// A hung request must not leave the customer staring at a permanent spinner:
+// time the insert out so the error panel (with call/WhatsApp fallbacks) shows.
+const BOOKING_INSERT_TIMEOUT_MS = 15000;
+const NOTIFICATION_TIMEOUT_MS = 10000;
+
+function timeoutSignal(ms: number) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return { signal: controller.signal, clear: () => clearTimeout(timer) };
+}
+
 export default function Book() {
   const [searchParams] = useSearchParams();
   
@@ -134,6 +145,7 @@ export default function Book() {
         return;
       }
 
+      const insertTimeout = timeoutSignal(BOOKING_INSERT_TIMEOUT_MS);
       const { error } = await supabase.from('bookings').insert({
         name: formData.name,
         phone: formData.phone,
@@ -148,6 +160,9 @@ export default function Book() {
         is_student: formData.isStudent,
         notes: formData.notes || null,
         status: 'pending',
+      }).abortSignal(insertTimeout.signal).then(result => {
+        insertTimeout.clear();
+        return result;
       });
 
       if (error) throw error;
@@ -178,24 +193,32 @@ export default function Book() {
 
         // Check if owner notifications are enabled
         let sendOwnerNotification = true;
+        const settingsTimeout = timeoutSignal(NOTIFICATION_TIMEOUT_MS);
         try {
           const { data: settingsData } = await supabase
             .from('settings')
             .select('value')
             .eq('key', 'send_owner_notifications')
+            .abortSignal(settingsTimeout.signal)
             .single();
           if (settingsData) {
             sendOwnerNotification = settingsData.value;
           }
         } catch {
           console.warn('Could not fetch notification settings, defaulting to enabled');
+        } finally {
+          settingsTimeout.clear();
         }
 
+        // The booking is already stored at this point, so notifications must
+        // never hold the confirmation back for long.
+        const notifyTimeout = timeoutSignal(NOTIFICATION_TIMEOUT_MS);
         const emailResults = await Promise.allSettled([
           formData.email ? fetch(`${supabaseUrl}/functions/v1/send-customer-confirmation`, {
             method: 'POST',
             headers,
             body: JSON.stringify(bookingData),
+            signal: notifyTimeout.signal,
           }) : Promise.resolve(),
 
           // Only send owner notification if enabled
@@ -203,6 +226,7 @@ export default function Book() {
             method: 'POST',
             headers,
             body: JSON.stringify(bookingData),
+            signal: notifyTimeout.signal,
           }) : Promise.resolve(),
 
           // Send SMS confirmation to customer
@@ -217,8 +241,10 @@ export default function Book() {
               pickupDate: formData.pickupDate,
               pickupTime: formData.pickupTime,
             }),
+            signal: notifyTimeout.signal,
           }) : Promise.resolve(),
         ]);
+        notifyTimeout.clear();
 
         const notificationTypes = ['customer email', sendOwnerNotification ? 'owner email' : 'owner email (skipped)', 'customer SMS'];
         for (let i = 0; i < emailResults.length; i++) {
