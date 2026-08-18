@@ -1,13 +1,24 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Phone, Clock } from 'lucide-react';
 
 export default function LiveChatWidget() {
+  const { pathname } = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
+  // The teaser covers form fields on narrow screens, so keep it out of the way
+  // while the customer is filling in the booking form.
+  const suppressTooltip = pathname.startsWith('/book');
+
   useEffect(() => {
+    if (suppressTooltip) {
+      setShowTooltip(false);
+      return;
+    }
+
     // Show tooltip after 5 seconds
     const tooltipTimer = setTimeout(() => {
       setShowTooltip(true);
@@ -22,7 +33,7 @@ export default function LiveChatWidget() {
       clearTimeout(tooltipTimer);
       clearTimeout(hideTimer);
     };
-  }, []);
+  }, [suppressTooltip]);
 
   const handleChatOpen = () => {
     setIsOpen(!isOpen);
@@ -54,7 +65,8 @@ export default function LiveChatWidget() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-full right-0 mb-3 w-64 bg-white rounded-lg shadow-xl p-4 border border-gray-100"
+              onClick={() => setShowTooltip(false)}
+              className="absolute bottom-full right-0 mb-3 w-64 bg-white rounded-lg shadow-xl p-4 border border-gray-100 cursor-pointer"
             >
               <div className="relative">
                 <p className="text-sm text-gray-700 font-medium">

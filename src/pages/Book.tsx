@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, Phone, CheckCircle } from 'lucide-react';
@@ -29,6 +29,13 @@ export default function Book() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (submitStatus === 'idle' || !resultRef.current) return;
+    resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    resultRef.current.focus({ preventScroll: true });
+  }, [submitStatus]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -291,6 +298,7 @@ export default function Book() {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
+            <div ref={resultRef} tabIndex={-1} className="outline-none scroll-mt-24">
             {submitStatus === 'success' && (
               <>
                 <AnimatedCard className="mb-8 bg-green-50 border-2 border-green-400 p-6" hoverEffect={false}>
@@ -348,6 +356,7 @@ export default function Book() {
                 </div>
               </AnimatedCard>
             )}
+            </div>
 
             <AnimatedCard className="bg-yellow-50 border-2 border-yellow-400 p-6 mb-8" hoverEffect={false}>
               <p className="text-gray-700 font-semibold">
