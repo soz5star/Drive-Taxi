@@ -1,26 +1,28 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "jsr:@supabase/supabase-js@2";
-import { corsHeaders } from "../_shared/cors.ts";
+import { createRemoteJWKSet, jwtVerify } from "jose";
+import { corsHeaders } from "./_shared/cors.js";
 
 interface ManualSMSData {
   phone: string;
   message: string;
 }
 
-/** Confirm the caller is a signed-in user (not just the public anon key). */
+const jwksUrl = process.env.NEON_AUTH_JWKS_URL;
+const jwks = jwksUrl ? createRemoteJWKSet(new URL(jwksUrl)) : null;
+
+/** Confirm the caller holds a valid Neon Auth session token. */
 async function requireAuthenticatedUser(req: Request): Promise<boolean> {
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader) return false;
-  const supabase = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    { global: { headers: { Authorization: authHeader } } }
-  );
-  const { data, error } = await supabase.auth.getUser();
-  return !error && !!data.user;
+  const token = req.headers.get("Authorization")?.replace(/^Bearer /i, "");
+  if (!token || !jwks) return false;
+  try {
+    const { payload } = await jwtVerify(token, jwks);
+    return !!payload.sub && payload.role !== "anonymous";
+  } catch (error) {
+    console.error("Token verification failed:", error);
+    return false;
+  }
 }
 
-Deno.serve(async (req: Request) => {
+export default async function handler(req: Request): Promise<Response> {
   const cors = corsHeaders(req);
 
   if (req.method === "OPTIONS") {
@@ -49,16 +51,16 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const clickSendUsername = Deno.env.get("CLICKSEND_USERNAME");
-    const clickSendApiKey = Deno.env.get("CLICKSEND_API_KEY");
-    const clickSendFrom = Deno.env.get("CLICKSEND_FROM") || "DriveTaxi";
+    const clickSendUsername = process.env.CLICKSEND_USERNAME;
+    const clickSendApiKey = process.env.CLICKSEND_API_KEY;
+    const clickSendFrom = process.env.CLICKSEND_FROM || "DriveTaxi";
 
     if (!clickSendUsername || !clickSendApiKey) {
       console.error("ClickSend not configured");
       return new Response(
         JSON.stringify({
           success: false,
-          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets."
+          error: "SMS not configured. Please add ClickSend credentials to the deployment environment."
         }),
         {
           status: 500,
@@ -127,7 +129,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending SMS:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: error instanceof Error ? error.message : String(error) }),
       {
         status: 500,
         headers: {
@@ -137,4 +139,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-});
+}

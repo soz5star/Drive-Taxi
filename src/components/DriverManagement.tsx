@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Trash2, User, Phone, Mail, FileText, X } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { client } from '../lib/neon';
 
 interface Driver {
   id: string;
@@ -24,13 +24,13 @@ export default function DriverManagement() {
   }, []);
 
   const fetchDrivers = async () => {
-    if (!supabase) {
+    if (!client) {
       setLoading(false);
       return;
     }
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('drivers')
         .select('*')
         .order('name', { ascending: true });
@@ -45,11 +45,11 @@ export default function DriverManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!supabase) return;
+    if (!client) return;
     if (!confirm('Are you sure you want to delete this driver?')) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('drivers')
         .delete()
         .eq('id', id);
@@ -72,11 +72,11 @@ export default function DriverManagement() {
     setShowModal(true);
   };
 
-  if (!supabase) {
+  if (!client) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-6 text-center">
         <h2 className="text-2xl font-bold mb-4">Driver Management</h2>
-        <p className="text-gray-500">Supabase is not configured. Please check your environment variables.</p>
+        <p className="text-gray-500">Neon is not configured. Please check your environment variables.</p>
       </div>
     );
   }
@@ -235,19 +235,19 @@ function DriverModal({ driver, onClose, onSuccess }: {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
+    if (!client) return;
     setSaving(true);
 
     try {
       if (driver) {
-        const { error } = await supabase
+        const { error } = await client
           .from('drivers')
           .update(formData)
           .eq('id', driver.id);
 
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await client
           .from('drivers')
           .insert([formData]);
 

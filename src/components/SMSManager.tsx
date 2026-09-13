@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MessageSquare, Send, Settings, CheckCircle, XCircle, Phone, Clock } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { client } from '../lib/neon';
 
 interface SMSTemplate {
   id: string;
@@ -61,22 +61,20 @@ export default function SMSManager() {
     setSending(true);
 
     try {
-      if (!supabase) {
+      if (!client) {
         alert('SMS service is not configured.');
         return;
       }
 
-      // Send the admin's own session token so the edge function can verify the
-      // caller is an authenticated user (not just anyone with the public key).
-      const { data: { session } } = await supabase.auth.getSession();
+      // Send the admin's own session token so the API function can verify the
+      // caller is an authenticated user (not just any anonymous visitor).
+      const { data: { session } } = await client.auth.getSession();
       if (!session) {
         alert('Your session has expired. Please sign in again.');
         return;
       }
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/send-sms-manual`, {
+      const response = await fetch('/api/send-sms-manual', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -273,7 +271,7 @@ export default function SMSManager() {
             <p className="text-sm text-amber-800">
               <strong>Note:</strong> These template toggles are a preview only and are not yet
               saved to the backend — they reset on refresh. Automatic booking SMS is currently
-              controlled by the <code>AUTO_SMS_ENABLED</code> Supabase secret.
+              controlled by the <code>AUTO_SMS_ENABLED</code> deployment environment variable.
             </p>
           </div>
 
@@ -390,12 +388,12 @@ export default function SMSManager() {
             <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
               <h4 className="font-semibold text-yellow-800 mb-2">ClickSend Setup</h4>
               <p className="text-sm text-yellow-700 mb-4">
-                To enable SMS, add these secrets to your Supabase project:
+                To enable SMS, add these environment variables to your deployment:
               </p>
               <code className="block bg-black text-green-400 p-3 rounded text-xs font-mono">
-                npx supabase secrets set CLICKSEND_USERNAME=your_username<br/>
-                npx supabase secrets set CLICKSEND_API_KEY=your_api_key<br/>
-                npx supabase secrets set CLICKSEND_FROM=DriveTaxi
+                npx client secrets set CLICKSEND_USERNAME=your_username<br/>
+                npx client secrets set CLICKSEND_API_KEY=your_api_key<br/>
+                npx client secrets set CLICKSEND_FROM=DriveTaxi
               </code>
             </div>
 

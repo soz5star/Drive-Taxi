@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Plane, Users, Luggage, MessageSquare, Phone, CheckCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { client } from '../lib/neon';
 import AnimatedCard from '../components/AnimatedCard';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
@@ -139,14 +139,14 @@ export default function Book() {
       // If the backend isn't configured, do NOT pretend the booking succeeded.
       // Silently "succeeding" here would lose the booking entirely. Surface an
       // error so the customer falls back to calling/WhatsApp.
-      if (!supabase) {
-        console.error('Supabase is not configured — booking cannot be stored.');
+      if (!client) {
+        console.error('Neon is not configured — booking cannot be stored.');
         setSubmitStatus('error');
         return;
       }
 
       const insertTimeout = timeoutSignal(BOOKING_INSERT_TIMEOUT_MS);
-      const { error } = await supabase.from('bookings').insert({
+      const { error } = await client.from('bookings').insert({
         name: formData.name,
         phone: formData.phone,
         email: formData.email || null,
@@ -167,100 +167,94 @@ export default function Book() {
 
       if (error) throw error;
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const bookingData = {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        pickupLocation: formData.pickupLocation,
+        dropoffLocation: formData.dropoffLocation,
+        pickupDate: formData.pickupDate,
+        pickupTime: formData.pickupTime,
+        flightNumber: formData.flightNumber,
+        passengers: parseInt(formData.passengers),
+        luggage: parseInt(formData.luggage),
+        isStudent: formData.isStudent,
+        notes: formData.notes,
+      };
 
-      if (supabaseUrl && supabaseAnonKey) {
-        const bookingData = {
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          pickupLocation: formData.pickupLocation,
-          dropoffLocation: formData.dropoffLocation,
-          pickupDate: formData.pickupDate,
-          pickupTime: formData.pickupTime,
-          flightNumber: formData.flightNumber,
-          passengers: parseInt(formData.passengers),
-          luggage: parseInt(formData.luggage),
-          isStudent: formData.isStudent,
-          notes: formData.notes,
-        };
+      const headers = {
+        'Content-Type': 'application/json',
+      };
 
-        const headers = {
-          'Authorization': `Bearer ${supabaseAnonKey}`,
-          'Content-Type': 'application/json',
-        };
-
-        // Check if owner notifications are enabled
-        let sendOwnerNotification = true;
-        const settingsTimeout = timeoutSignal(NOTIFICATION_TIMEOUT_MS);
-        try {
-          const { data: settingsData } = await supabase
-            .from('settings')
-            .select('value')
-            .eq('key', 'send_owner_notifications')
-            .abortSignal(settingsTimeout.signal)
-            .single();
-          if (settingsData) {
-            sendOwnerNotification = settingsData.value;
-          }
-        } catch {
-          console.warn('Could not fetch notification settings, defaulting to enabled');
-        } finally {
-          settingsTimeout.clear();
+      // Check if owner notifications are enabled
+      let sendOwnerNotification = true;
+      const settingsTimeout = timeoutSignal(NOTIFICATION_TIMEOUT_MS);
+      try {
+        const { data: settingsData } = await client
+          .from('settings')
+          .select('value')
+          .eq('key', 'send_owner_notifications')
+          .abortSignal(settingsTimeout.signal)
+          .single();
+        if (settingsData) {
+          sendOwnerNotification = settingsData.value;
         }
+      } catch {
+        console.warn('Could not fetch notification settings, defaulting to enabled');
+      } finally {
+        settingsTimeout.clear();
+      }
 
-        // The booking is already stored at this point, so notifications must
-        // never hold the confirmation back for long.
-        const notifyTimeout = timeoutSignal(NOTIFICATION_TIMEOUT_MS);
-        const emailResults = await Promise.allSettled([
-          formData.email ? fetch(`${supabaseUrl}/functions/v1/send-customer-confirmation`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(bookingData),
-            signal: notifyTimeout.signal,
-          }) : Promise.resolve(),
+      // The booking is already stored at this point, so notifications must
+      // never hold the confirmation back for long.
+      const notifyTimeout = timeoutSignal(NOTIFICATION_TIMEOUT_MS);
+      const emailResults = await Promise.allSettled([
+        formData.email ? fetch('/api/send-customer-confirmation', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(bookingData),
+          signal: notifyTimeout.signal,
+        }) : Promise.resolve(),
 
-          // Only send owner notification if enabled
-          sendOwnerNotification ? fetch(`${supabaseUrl}/functions/v1/send-owner-notification`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(bookingData),
-            signal: notifyTimeout.signal,
-          }) : Promise.resolve(),
+        // Only send owner notification if enabled
+        sendOwnerNotification ? fetch('/api/send-owner-notification', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(bookingData),
+          signal: notifyTimeout.signal,
+        }) : Promise.resolve(),
 
-          // Send SMS confirmation to customer
-          formData.phone ? fetch(`${supabaseUrl}/functions/v1/send-sms-confirmation`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({
-              phone: formData.phone,
-              name: formData.name,
-              pickupLocation: formData.pickupLocation,
-              dropoffLocation: formData.dropoffLocation,
-              pickupDate: formData.pickupDate,
-              pickupTime: formData.pickupTime,
-            }),
-            signal: notifyTimeout.signal,
-          }) : Promise.resolve(),
-        ]);
-        notifyTimeout.clear();
+        // Send SMS confirmation to customer
+        formData.phone ? fetch('/api/send-sms-confirmation', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            phone: formData.phone,
+            name: formData.name,
+            pickupLocation: formData.pickupLocation,
+            dropoffLocation: formData.dropoffLocation,
+            pickupDate: formData.pickupDate,
+            pickupTime: formData.pickupTime,
+          }),
+          signal: notifyTimeout.signal,
+        }) : Promise.resolve(),
+      ]);
+      notifyTimeout.clear();
 
-        const notificationTypes = ['customer email', sendOwnerNotification ? 'owner email' : 'owner email (skipped)', 'customer SMS'];
-        for (let i = 0; i < emailResults.length; i++) {
-          const result = emailResults[i];
-          const notificationType = notificationTypes[i];
+      const notificationTypes = ['customer email', sendOwnerNotification ? 'owner email' : 'owner email (skipped)', 'customer SMS'];
+      for (let i = 0; i < emailResults.length; i++) {
+        const result = emailResults[i];
+        const notificationType = notificationTypes[i];
 
-          if (result.status === 'rejected') {
-            console.error(`${notificationType} failed:`, result.reason);
-          } else if (result.value && typeof (result.value as Response).ok !== 'undefined') {
-            const response = result.value as Response;
-            if (!response.ok) {
-              const errorText = await response.text();
-              console.error(`${notificationType} error (${response.status}):`, errorText);
-            } else {
-              console.log(`${notificationType} sent successfully`);
-            }
+        if (result.status === 'rejected') {
+          console.error(`${notificationType} failed:`, result.reason);
+        } else if (result.value && typeof (result.value as Response).ok !== 'undefined') {
+          const response = result.value as Response;
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`${notificationType} error (${response.status}):`, errorText);
+          } else {
+            console.log(`${notificationType} sent successfully`);
           }
         }
       }

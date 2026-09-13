@@ -1,5 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { corsHeaders, escapeHtml } from "../_shared/cors.ts";
+import { corsHeaders, escapeHtml } from "./_shared/cors.js";
 
 interface BookingData {
   name: string;
@@ -16,7 +15,7 @@ interface BookingData {
   notes?: string;
 }
 
-Deno.serve(async (req: Request) => {
+export default async function handler(req: Request): Promise<Response> {
   const cors = corsHeaders(req);
 
   if (req.method === "OPTIONS") {
@@ -29,8 +28,8 @@ Deno.serve(async (req: Request) => {
   try {
     const booking: BookingData = await req.json();
 
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    const ownerEmail = Deno.env.get("OWNER_EMAIL");
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const ownerEmail = process.env.OWNER_EMAIL;
 
     if (!resendApiKey) {
       throw new Error("RESEND_API_KEY not configured");
@@ -186,7 +185,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending owner notification:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: error instanceof Error ? error.message : String(error) }),
       {
         status: 500,
         headers: {
@@ -196,4 +195,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-});
+}

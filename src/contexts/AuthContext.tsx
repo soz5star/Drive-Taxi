@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
-import { User, Session } from '@supabase/supabase-js';
+import { client, type Session, type User } from '../lib/neon';
 
 interface AuthContextType {
   user: User | null;
@@ -18,18 +17,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) {
+    if (!client) {
       setLoading(false);
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    client.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
       (async () => {
         setSession(session);
         setUser(session?.user ?? null);
@@ -40,8 +39,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    if (!supabase) throw new Error('Supabase is not configured');
-    const { error } = await supabase.auth.signInWithPassword({
+    if (!client) throw new Error('Neon is not configured');
+    const { error } = await client.auth.signInWithPassword({
       email,
       password,
     });
@@ -49,8 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    if (!supabase) return;
-    const { error } = await supabase.auth.signOut();
+    if (!client) return;
+    const { error } = await client.auth.signOut();
     if (error) throw error;
   };
 

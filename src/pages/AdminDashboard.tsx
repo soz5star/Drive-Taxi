@@ -7,11 +7,13 @@ import {
   DollarSign, TrendingUp, TrendingDown, Car, User, Package, CheckCircle, Settings
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { client } from '../lib/neon';
 import DriverManagement from '../components/DriverManagement';
 import VehicleManagement from '../components/VehicleManagement';
 import SMSManager from '../components/SMSManager';
 import ExpenseTracker from '../components/ExpenseTracker';
+
+const BOOKINGS_REFRESH_MS = 30_000;
 
 interface Booking {
   id: string;
@@ -62,14 +64,14 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Notification settings from Supabase
+  // Notification settings stored in the database
   const [sendOwnerNotifications, setSendOwnerNotifications] = useState(true);
 
-  // Fetch settings from Supabase
+  // Fetch settings from the database
   const fetchSettings = useCallback(async () => {
-    if (!supabase) return;
+    if (!client) return;
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('settings')
         .select('value')
         .eq('key', 'send_owner_notifications')
@@ -85,12 +87,12 @@ export default function AdminDashboard() {
   }, []);
 
   const toggleOwnerNotifications = async () => {
-    if (!supabase) return;
+    if (!client) return;
     const newValue = !sendOwnerNotifications;
     setSendOwnerNotifications(newValue);
     
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('settings')
         .upsert({ key: 'send_owner_notifications', value: newValue }, { onConflict: 'key' });
       
@@ -102,25 +104,25 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchData = useCallback(async () => {
-    if (!supabase) {
+  const fetchData = useCallback(async ({ silent = false }: { silent?: boolean } = {}) => {
+    if (!client) {
       setLoading(false);
-      console.warn('Supabase is not configured. Admin dashboard will be empty.');
+      console.warn('Neon is not configured. Admin dashboard will be empty.');
       return;
     }
 
-    setLoading(true);
+    if (!silent) setLoading(true);
     try {
       const [bookingsRes, driversRes, vehiclesRes] = await Promise.all([
-        supabase
+        client
           .from('bookings')
           .select('*')
           .order('pickup_date', { ascending: true })
           .order('pickup_time', { ascending: true }),
-        supabase
+        client
           .from('drivers')
           .select('id, name, status'),
-        supabase
+        client
           .from('vehicles')
           .select('id, make, model, plate_number, status')
       ]);
@@ -147,30 +149,19 @@ export default function AdminDashboard() {
     fetchData();
     fetchSettings();
 
-    // Subscribe to realtime bookings updates
-    if (supabase) {
-      const subscription = supabase
-        .channel('bookings_changes')
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'bookings',
-          },
-          (payload) => {
-            console.log('Booking change received:', payload);
-            // Refresh bookings data when any change occurs
-            fetchData();
-          }
-        )
-        .subscribe();
+    if (!client) return;
 
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [user, navigate, fetchData]);
+    // Neon's Data API has no realtime channel, so bookings are refreshed on a
+    // timer instead, and whenever the tab regains focus.
+    const refresh = () => fetchData({ silent: true });
+    const interval = window.setInterval(refresh, BOOKINGS_REFRESH_MS);
+    window.addEventListener('focus', refresh);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+    };
+  }, [user, navigate, fetchData, fetchSettings]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -178,11 +169,11 @@ export default function AdminDashboard() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!supabase) return;
+    if (!client) return;
     if (!confirm('Are you sure you want to delete this booking?')) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('bookings')
         .delete()
         .eq('id', id);
@@ -197,9 +188,9 @@ export default function AdminDashboard() {
   };
 
   const updateBookingStatus = async (id: string, status: string) => {
-    if (!supabase) return;
+    if (!client) return;
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('bookings')
         .update({ status })
         .eq('id', id);
@@ -216,9 +207,9 @@ export default function AdminDashboard() {
   };
 
   const assignDriver = async (bookingId: string, driverId: string | null) => {
-    if (!supabase) return;
+    if (!client) return;
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('bookings')
         .update({ driver_id: driverId })
         .eq('id', bookingId);
@@ -235,9 +226,9 @@ export default function AdminDashboard() {
   };
 
   const assignVehicle = async (bookingId: string, vehicleId: string | null) => {
-    if (!supabase) return;
+    if (!client) return;
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('bookings')
         .update({ vehicle_id: vehicleId })
         .eq('id', bookingId);
@@ -254,11 +245,11 @@ export default function AdminDashboard() {
   };
 
   const updatePrice = async (bookingId: string, price: number) => {
-    if (!supabase) return;
+    if (!client) return;
     // Guard against NaN (e.g. an empty/cleared price field) reaching the DB.
     if (!Number.isFinite(price) || price < 0) return;
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('bookings')
         .update({ price })
         .eq('id', bookingId);
@@ -314,16 +305,16 @@ export default function AdminDashboard() {
   const completedBookings = bookings.filter(b => b.status === 'completed').length;
   const pendingBookings = bookings.filter(b => b.status === 'pending').length;
 
-  if (!supabase) {
+  if (!client) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
           <div className="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
             <Package className="h-8 w-8 text-yellow-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Supabase Not Configured</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Neon Not Configured</h2>
           <p className="text-gray-600 mb-8">
-            The admin dashboard requires Supabase to be configured. Please set your VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your environment variables.
+            The admin dashboard requires Neon to be configured. Please set VITE_NEON_AUTH_URL and VITE_NEON_DATA_API_URL in your environment variables.
           </p>
           <button
             onClick={() => navigate('/')}
@@ -347,7 +338,7 @@ export default function AdminDashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <motion.button
-                onClick={fetchData}
+                onClick={() => fetchData()}
                 className="flex items-center space-x-2 bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
