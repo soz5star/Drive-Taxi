@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Fuel, Wrench, Receipt, Trash2, TrendingDown, Calendar, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { client } from '../lib/neon';
 
 interface Expense {
   id: string;
@@ -22,16 +22,16 @@ export default function ExpenseTracker() {
     amount: ''
   });
 
-  // Fetch expenses from Supabase
+  // Fetch expenses from the database
   useEffect(() => {
     const fetchExpenses = async () => {
-      if (!supabase) {
+      if (!client) {
         setLoading(false);
         return;
       }
 
       try {
-        const { data, error } = await supabase
+        const { data, error } = await client
           .from('expenses')
           .select('*')
           .order('date', { ascending: false });
@@ -49,10 +49,10 @@ export default function ExpenseTracker() {
   }, []);
 
   const handleAddExpense = async () => {
-    if (!newExpense.description || !newExpense.amount || !supabase) return;
+    if (!newExpense.description || !newExpense.amount || !client) return;
     
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('expenses')
         .insert([{
           date: newExpense.date,
@@ -81,10 +81,10 @@ export default function ExpenseTracker() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this expense?')) return;
-    if (!supabase) return;
+    if (!client) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('expenses')
         .delete()
         .eq('id', id);

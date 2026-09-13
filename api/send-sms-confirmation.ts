@@ -1,5 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { corsHeaders } from "../_shared/cors.ts";
+import { corsHeaders } from "./_shared/cors.js";
 
 interface SMSData {
   phone: string;
@@ -10,7 +9,7 @@ interface SMSData {
   pickupTime: string;
 }
 
-Deno.serve(async (req: Request) => {
+export default async function handler(req: Request): Promise<Response> {
   const cors = corsHeaders(req);
 
   if (req.method === "OPTIONS") {
@@ -30,10 +29,10 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const clickSendUsername = Deno.env.get("CLICKSEND_USERNAME");
-    const clickSendApiKey = Deno.env.get("CLICKSEND_API_KEY");
-    const clickSendFrom = Deno.env.get("CLICKSEND_FROM") || "DriveTaxi";
-    const autoSmsEnabled = Deno.env.get("AUTO_SMS_ENABLED") !== "false"; // default true
+    const clickSendUsername = process.env.CLICKSEND_USERNAME;
+    const clickSendApiKey = process.env.CLICKSEND_API_KEY;
+    const clickSendFrom = process.env.CLICKSEND_FROM || "DriveTaxi";
+    const autoSmsEnabled = process.env.AUTO_SMS_ENABLED !== "false"; // default true
 
     if (!autoSmsEnabled) {
       console.log("Auto-SMS is disabled");
@@ -53,7 +52,7 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({
           success: false,
-          error: "SMS not configured. Please add ClickSend credentials in Supabase secrets."
+          error: "SMS not configured. Please add ClickSend credentials to the deployment environment."
         }),
         {
           status: 500,
@@ -125,7 +124,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending SMS:", error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: error instanceof Error ? error.message : String(error) }),
       {
         status: 500,
         headers: {
@@ -135,4 +134,4 @@ Deno.serve(async (req: Request) => {
       }
     );
   }
-});
+}

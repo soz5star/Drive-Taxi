@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Trash2, Car, Users, X } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { client } from '../lib/neon';
 
 interface Vehicle {
   id: string;
@@ -25,13 +25,13 @@ export default function VehicleManagement() {
   }, []);
 
   const fetchVehicles = async () => {
-    if (!supabase) {
+    if (!client) {
       setLoading(false);
       return;
     }
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('vehicles')
         .select('*')
         .order('make', { ascending: true });
@@ -46,11 +46,11 @@ export default function VehicleManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!supabase) return;
+    if (!client) return;
     if (!confirm('Are you sure you want to delete this vehicle?')) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await client
         .from('vehicles')
         .delete()
         .eq('id', id);
@@ -73,11 +73,11 @@ export default function VehicleManagement() {
     setShowModal(true);
   };
 
-  if (!supabase) {
+  if (!client) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-6 text-center">
         <h2 className="text-2xl font-bold mb-4">Vehicle Management</h2>
-        <p className="text-gray-500">Supabase is not configured. Please check your environment variables.</p>
+        <p className="text-gray-500">Neon is not configured. Please check your environment variables.</p>
       </div>
     );
   }
@@ -230,19 +230,19 @@ function VehicleModal({ vehicle, onClose, onSuccess }: {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
+    if (!client) return;
     setSaving(true);
 
     try {
       if (vehicle) {
-        const { error } = await supabase
+        const { error } = await client
           .from('vehicles')
           .update(formData)
           .eq('id', vehicle.id);
 
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await client
           .from('vehicles')
           .insert([formData]);
 

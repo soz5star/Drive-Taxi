@@ -1,73 +1,60 @@
 # Database Setup Guide
 
 ## Overview
-This project uses Supabase (PostgreSQL) for the database. The schema includes:
+This project uses [Neon](https://neon.tech) (serverless PostgreSQL) for the database,
+Neon Auth for admin sign-in, and the Neon Data API (PostgREST) for browser queries.
+
+Tables:
 - **bookings** - Customer booking requests
 - **drivers** - Driver management
 - **vehicles** - Vehicle fleet management
+- **expenses** - Expense tracking
+- **settings** - Key/value app settings
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in your actual Supabase credentials:
+Copy `.env.example` to `.env.local` and fill in the values from the Neon Console
+(Project → Data API / Auth) or by running `neon deploy` with the Neon CLI:
 
 ```bash
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_NEON_AUTH_URL=...        # Neon Auth URL
+VITE_NEON_DATA_API_URL=...    # Data API (PostgREST) URL
+DATABASE_URL=...              # Pooled connection string (migrations, API functions)
+DATABASE_URL_UNPOOLED=...     # Direct connection string
+NEON_AUTH_JWKS_URL=...        # Used by /api/send-sms-manual to verify admin tokens
 ```
 
-## Option 1: Using Supabase Dashboard (Recommended)
+Only `VITE_`-prefixed variables reach the browser. Everything else must stay
+server-side (Vercel project environment variables).
 
-Since Supabase CLI is not available in this environment, use the Supabase Dashboard:
+## Applying the schema
 
-### Step 1: Create Project
-1. Go to https://supabase.com
-2. Sign up/login and create a new project
-3. Wait for the database to be provisioned
-
-### Step 2: Run Migration Files
-1. Go to your project's **SQL Editor**
-2. Create a **New Query**
-3. Copy and paste the contents of each migration file from `supabase/migrations/` in order:
-   - `00000000000000_initial_schema.sql` (base schema)
-   - `20251226144620_add_admin_features.sql` (admin features)
-   - `20251226145722_fix_bookings_rls_policy.sql`
-   - ... (remaining migration files in order)
-
-### Step 3: Enable Auth (Optional - for admin dashboard)
-1. Go to **Authentication** → **Settings**
-2. Enable Email provider if you want admin login
-3. Create a user for admin access
-
-### Step 4: Update Environment Variables
-1. Go to **Project Settings** → **API**
-2. Copy the **Project URL** and **anon public** key
-3. Update your `.env` file
-
-## Option 2: Using Supabase CLI (If Available)
-
-If you have Docker and want to run Supabase locally:
+Migrations live in `neon/migrations/` and are applied in filename order:
 
 ```bash
-# Install Supabase CLI (requires scoop on Windows, brew on macOS, or apt on Linux)
-scoop install supabase
-
-# Start local Supabase
-supabase start
-
-# Run migrations
-supabase db reset
+npm run db:migrate
 ```
 
-## Option 3: Direct SQL Execution
+The script reads `DATABASE_URL_UNPOOLED` (falling back to `DATABASE_URL`), so
+load your environment first, e.g. `set -a && source .env.local && set +a`.
 
-You can also run the SQL directly on any PostgreSQL instance:
+To apply the schema to a different Neon branch, point `DATABASE_URL` at that
+branch's connection string.
 
-```bash
-# Connect to your PostgreSQL database
-psql -h your-host -U your-user -d your-database -f supabase/migrations/00000000000000_initial_schema.sql
-psql -h your-host -U your-user -d your-database -f supabase/migrations/20251226144620_add_admin_features.sql
-# ... run remaining migrations in order
-```
+## Admin access
+
+Neon Auth manages admin accounts. Supabase password hashes cannot be imported,
+so create the admin user in the Neon Console (Auth → Users) and sign in at
+`/admin/login`.
+
+## Per-PR database branches
+
+`.github/workflows/neon_workflow.yml` creates a Neon branch for every pull
+request (expiring after 14 days), runs `npm run db:migrate` against it, and
+deletes it when the PR closes. It requires:
+
+- repository variable `NEON_PROJECT_ID`
+- repository secret `NEON_API_KEY`
 
 ## Database Schema Summary
 
@@ -88,6 +75,10 @@ psql -h your-host -U your-user -d your-database -f supabase/migrations/202512261
 | is_student | boolean | Student discount flag |
 | notes | text | Additional notes |
 | status | text | pending/confirmed/etc |
+| price | numeric | Quoted price |
+| driver_id | uuid | Assigned driver |
+| vehicle_id | uuid | Assigned vehicle |
+| estimated_duration | integer | Minutes |
 | created_at | timestamptz | Timestamp |
 
 ### drivers
@@ -115,24 +106,26 @@ psql -h your-host -U your-user -d your-database -f supabase/migrations/202512261
 
 ## Row Level Security (RLS)
 
-The database uses RLS policies:
-- **Anonymous users** can insert bookings (public booking form) — INSERT only, no read access
-- **Authenticated users** can view/manage all tables (admin dashboard)
+RLS is enabled on every application table and the Data API roles are granted
+only what they need:
 
-> RLS is **enabled** on `bookings` (see `20260711000000_re_enable_rls_on_bookings.sql`).
-> An earlier migration disabled it; that has been reverted so customer PII in
-> `bookings` is not readable by the anonymous role. If you add new tables, enable
-> RLS on them too and grant `anon` only the access it genuinely needs.
+- **anonymous** (public booking form) — INSERT on `bookings` only, no read access
+  to customer data.
+- **authenticated** (admin dashboard) — full read/write on all tables.
+
+If you add a table, enable RLS on it and add explicit grants/policies; without
+them the Data API exposes nothing, which is the safe default.
 
 ## Troubleshooting
 
-### Migration Errors
-If you get errors about columns already existing, that's expected - the migration files use `IF NOT EXISTS` checks for safety.
+### Migration errors
+Migrations are written to be re-runnable (`IF NOT EXISTS`, `DROP POLICY IF EXISTS`),
+so re-applying them on an existing branch is safe.
 
-### Connection Issues
-- Verify your `.env` file has correct credentials
-- Check if your Supabase project is active (not paused)
-- Ensure you're using the **anon** key, not the service_role key
+### Connection issues
+- Confirm `.env.local` has current values (`neon deploy` refreshes them).
+- Check the Neon branch is not suspended or expired (preview branches expire after 14 days).
 
-### CORS Issues
-If testing locally, ensure your Supabase project allows requests from `http://localhost:5173` in **Authentication** → **URL Configuration**.
+### CORS
+The API functions under `api/` allow only the origins listed in
+`api/_shared/cors.ts`; add new production or preview domains there.
