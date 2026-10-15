@@ -22,7 +22,7 @@ export default function StAndrewsToDundeeAirport() {
     },
     {
       q: 'What is the cost?',
-      a: 'Our standard rate is £50 for transfers between St Andrews and Dundee Airport in either direction.'
+      a: 'Our standard rate is £50 from St Andrews to Dundee Airport, and £60 for the return journey from the airport.'
     },
     {
       q: 'Which airlines fly from Dundee?',
@@ -33,8 +33,8 @@ export default function StAndrewsToDundeeAirport() {
   return (
     <div>
       <SEO
-        title="St Andrews to Dundee Airport Taxi | £50 Transfer | 30 Mins"
-        description="Quick taxi from St Andrews to Dundee Airport. Only 30 minutes, £50 fixed price. Perfect for London flights. 24/7 service. Book: 07470 856699"
+        title="St Andrews to Dundee Airport Taxi | From £50 Transfer | 30 Mins"
+        description="Quick taxi from St Andrews to Dundee Airport. Only 30 minutes, from £50. Perfect for London flights. 24/7 service. Book: 07470 856699"
         canonical="https://drivetaxi.co.uk/st-andrews-to-dundee-airport"
         keywords="St Andrews Dundee airport taxi, Dundee airport transfer, St Andrews to DND, Dundee airport shuttle, quick airport taxi"
       />
@@ -64,7 +64,7 @@ export default function StAndrewsToDundeeAirport() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Just 30 minutes to Dundee Airport. Fixed price £50.
+              Just 30 minutes to Dundee Airport. From £50.
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -138,16 +138,12 @@ export default function StAndrewsToDundeeAirport() {
                   <h3 className="text-2xl font-bold mb-6">Pricing</h3>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center pb-4 border-b border-gray-700">
-                      <span>St Andrews ↔ Dundee Airport</span>
+                      <span>St Andrews → Dundee Airport</span>
                       <span className="text-2xl font-bold text-yellow-400">£50</span>
                     </div>
                     <div className="flex justify-between items-center pb-4 border-b border-gray-700">
-                      <span>Dundee ↔ St Andrews Airport</span>
-                      <span className="text-2xl font-bold text-yellow-400">£50</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm text-gray-400">
-                      <span>Student Discount (10% off)</span>
-                      <span>Save £5</span>
+                      <span>Dundee Airport → St Andrews</span>
+                      <span className="text-2xl font-bold text-yellow-400">£60</span>
                     </div>
                   </div>
                   <AnimatedButton to="/book?pickup=St%20Andrews&dropoff=Dundee%20Airport" className="w-full mt-6">

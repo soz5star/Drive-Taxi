@@ -12,7 +12,6 @@ interface BookingData {
   flightNumber?: string;
   passengers: number;
   luggage: number;
-  isStudent: boolean;
   notes?: string;
 }
 
@@ -204,17 +203,6 @@ Deno.serve(async (req: Request) => {
             color: #111827;
             font-weight: 600;
           }
-          .student-badge {
-            background: linear-gradient(135deg, #fcd34d 0%, #fbbf24 100%);
-            color: #000;
-            padding: 16px 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 15px;
-            margin: 24px 0;
-            box-shadow: 0 2px 4px rgba(251, 191, 36, 0.3);
-          }
           .notes-box {
             background: #fffbeb;
             border-left: 4px solid #fcd34d;
@@ -359,12 +347,6 @@ Deno.serve(async (req: Request) => {
             <div class="detail-item" style="margin-bottom: 20px;">
               <div class="detail-label">✈️ Flight Number</div>
               <div class="detail-value">${b.flightNumber}</div>
-            </div>
-            ` : ''}
-
-            ${booking.isStudent ? `
-            <div class="student-badge">
-              🎓 Student Discount Applied - 10% OFF
             </div>
             ` : ''}
 

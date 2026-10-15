@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   LogOut, Trash2, Phone, Mail, MapPin, Calendar, Clock, Users, Luggage,
-  Plane, MessageSquare, GraduationCap, RefreshCw, Download, Search, Filter,
+  Plane, MessageSquare, RefreshCw, Download, Search, Filter,
   DollarSign, TrendingUp, TrendingDown, Car, User, Package, CheckCircle, Settings
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -25,7 +25,6 @@ interface Booking {
   flight_number: string | null;
   passengers: number;
   luggage: number;
-  is_student: boolean;
   notes: string | null;
   status: string;
   price: number | null;
@@ -657,12 +656,6 @@ export default function AdminDashboard() {
                         <div className="flex items-center space-x-3">
                           <Mail className="w-5 h-5 text-yellow-400" />
                           <a href={`mailto:${selectedBooking.email}`} className="hover:text-yellow-600">{selectedBooking.email}</a>
-                        </div>
-                      )}
-                      {selectedBooking.is_student && (
-                        <div className="flex items-center space-x-3 text-blue-600 bg-blue-50 px-3 py-1 rounded-full w-fit">
-                          <GraduationCap className="w-4 h-4" />
-                          <span className="text-sm font-bold">Student Discount Applied</span>
                         </div>
                       )}
                     </div>

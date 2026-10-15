@@ -12,7 +12,7 @@ export default function Contact() {
     <div>
       <SEO
         title="Contact Drive Taxi St Andrews | Book Airport Transfer"
-        description="Contact Drive Taxi for airport transfers, local journeys & student discounts. WhatsApp, phone, or email. 24/7 service. Call 07470 856699"
+        description="Contact Drive Taxi for airport transfers and local journeys. WhatsApp, phone, or email. 24/7 service. Call 07470 856699"
         canonical="https://drivetaxi.co.uk/contact"
         keywords="contact St Andrews taxi, book airport transfer, taxi phone number, WhatsApp taxi booking"
       />
@@ -171,8 +171,7 @@ export default function Contact() {
                 { q: 'How far in advance should I book?', a: 'We recommend booking as early as possible, especially for airport transfers and early morning journeys. However, we accept bookings at any time subject to availability.' },
                 { q: 'Do you track flights for airport pickups?', a: 'Yes, we track all incoming flights to ensure we\'re there when you land, even if your flight is delayed.' },
                 { q: 'What payment methods do you accept?', a: 'We accept cash and all major cards. Payment details will be confirmed when you book.' },
-                { q: 'Are your vehicles suitable for luggage?', a: 'Yes, all our vehicles have ample space for passengers and luggage. Please let us know your luggage requirements when booking.' },
-                { q: 'How does the student discount work?', a: 'Students receive 10% off with valid student ID. Simply mention you\'re a student when booking and show your ID at pickup.' }
+                { q: 'Are your vehicles suitable for luggage?', a: 'Yes, all our vehicles have ample space for passengers and luggage. Please let us know your luggage requirements when booking.' }
               ].map((faq, index) => (
                 <AnimatedCard key={index} delay={index * 0.1} className="bg-gray-900 p-6" hoverEffect={false}>
                   <motion.div

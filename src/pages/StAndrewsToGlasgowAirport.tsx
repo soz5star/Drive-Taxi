@@ -22,7 +22,7 @@ export default function StAndrewsToGlasgowAirport() {
     },
     {
       q: 'What is the cost?',
-      a: 'Our standard rate is £190 from St Andrews to Glasgow Airport. The return journey is £170.'
+      a: 'Our standard rate is £210 from St Andrews to Glasgow Airport, and £210 for the return journey.'
     },
     {
       q: 'Why is Glasgow more expensive than Edinburgh?',
@@ -33,8 +33,8 @@ export default function StAndrewsToGlasgowAirport() {
   return (
     <div>
       <SEO
-        title="St Andrews to Glasgow Airport Taxi | £190 Transfer | Drive Taxi"
-        description="Reliable taxi from St Andrews to Glasgow Airport. 2 hour journey, £190 fixed price, flight tracking, meet & greet. 24/7 service. Book: 07470 856699"
+        title="St Andrews to Glasgow Airport Taxi | £210 Transfer | Drive Taxi"
+        description="Reliable taxi from St Andrews to Glasgow Airport. 2 hour journey, £210 fixed price, flight tracking, meet & greet. 24/7 service. Book: 07470 856699"
         canonical="https://drivetaxi.co.uk/st-andrews-to-glasgow-airport"
         keywords="St Andrews Glasgow airport taxi, Glasgow airport transfer, St Andrews to GLA, Glasgow airport shuttle Fife, taxi to Glasgow airport"
       />
@@ -57,7 +57,7 @@ export default function StAndrewsToGlasgowAirport() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              Comfortable 2-hour journey to Scotland's largest airport. Fixed price £190.
+              Comfortable 2-hour journey to Scotland's largest airport. Fixed price £210.
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"
@@ -132,15 +132,11 @@ export default function StAndrewsToGlasgowAirport() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center pb-4 border-b border-gray-700">
                       <span>St Andrews → Glasgow Airport</span>
-                      <span className="text-2xl font-bold text-yellow-400">£190</span>
+                      <span className="text-2xl font-bold text-yellow-400">£210</span>
                     </div>
                     <div className="flex justify-between items-center pb-4 border-b border-gray-700">
                       <span>Glasgow Airport → St Andrews</span>
-                      <span className="text-2xl font-bold text-yellow-400">£170</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm text-gray-400">
-                      <span>Student Discount (10% off)</span>
-                      <span>Save up to £19</span>
+                      <span className="text-2xl font-bold text-yellow-400">£210</span>
                     </div>
                   </div>
                   <AnimatedButton to="/book?pickup=St%20Andrews&dropoff=Glasgow%20Airport" className="w-full mt-6">

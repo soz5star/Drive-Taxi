@@ -1,9 +1,8 @@
 import { motion } from 'framer-motion';
-import { Clock, MapPin, AlertCircle, GraduationCap } from 'lucide-react';
+import { Clock, MapPin, AlertCircle } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedCard from '../components/AnimatedCard';
 import AnimatedButton from '../components/AnimatedButton';
-import AnimatedLink from '../components/AnimatedLink';
 import ParticleBackground from '../components/ParticleBackground';
 import AnimatedBackground3D from '../components/AnimatedBackground3D';
 import { getRoutePrice } from '../data/pricing';
@@ -23,31 +22,55 @@ export default function Pricing() {
 
   const routes = [
     {
-      category: 'St Andrews ↔ Edinburgh Airport',
+      category: 'St Andrews → Airports',
+      note: 'Based on 1–8 passengers and suitcases (1 pickup point and drop-off at the airport).',
       journeys: [
         fare('St Andrews', 'Edinburgh Airport'),
-        fare('Edinburgh Airport', 'St Andrews'),
-      ],
-    },
-    {
-      category: 'St Andrews ↔ Glasgow Airport',
-      journeys: [
         fare('St Andrews', 'Glasgow Airport'),
-        fare('Glasgow Airport', 'St Andrews'),
-      ],
-    },
-    {
-      category: 'St Andrews ↔ Dundee Airport',
-      journeys: [
+        fare('St Andrews', 'Aberdeen Airport'),
         fare('St Andrews', 'Dundee Airport'),
-        fare('Dundee Airport', 'St Andrews'),
       ],
     },
     {
-      category: 'Dundee ↔ Glasgow Airport',
+      category: 'Airports → St Andrews',
+      note: 'Pickup at the airport and 1 drop-off point (parking included).',
       journeys: [
-        fare('Dundee', 'Glasgow Airport'),
-        fare('Glasgow Airport', 'Dundee'),
+        fare('Edinburgh Airport', 'St Andrews'),
+        fare('Edinburgh', 'St Andrews'),
+        fare('Glasgow Airport', 'St Andrews'),
+        fare('Aberdeen Airport', 'St Andrews'),
+        fare('Dundee Airport', 'St Andrews'),
+        fare('Edinburgh Airport', 'Fairmont Hotel'),
+        fare('Edinburgh Airport', 'Old Course Hotel'),
+      ],
+    },
+    {
+      category: 'St Andrews → Local Destinations',
+      note: 'Advance booking only. All prices are before 22:00.',
+      journeys: [
+        fare('St Andrews', 'Waverley Station'),
+        fare('St Andrews', 'Crail'),
+        fare('St Andrews', 'Cupar'),
+        fare('St Andrews', 'Pittenweem'),
+        fare('St Andrews', 'Dundee'),
+        fare('St Andrews', 'Kingsbarns'),
+        fare('St Andrews', 'Leuchars Station'),
+        fare('St Andrews', 'Carnoustie Golf Courses'),
+        fare('St Andrews', 'Gleneagles'),
+      ],
+    },
+    {
+      category: 'Leuchars Train Station → Destinations',
+      note: 'Advance booking only. All prices are before 22:00.',
+      journeys: [
+        fare('Leuchars Station', 'St Andrews'),
+        fare('Leuchars Station', 'Anstruther'),
+        fare('Leuchars Station', 'Crail'),
+        fare('Leuchars Station', 'Kingsbarns'),
+        fare('Leuchars Station', 'Cupar'),
+        fare('Leuchars Station', 'Dundee'),
+        fare('Leuchars Station', 'Dundee Airport'),
+        fare('Leuchars Station', 'Edinburgh Airport'),
       ],
     },
   ];
@@ -108,6 +131,7 @@ export default function Pricing() {
                 <AnimatedCard key={index} delay={index * 0.1} className="overflow-hidden p-0 border border-gray-200 shadow-sm">
                   <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
                     <h2 className="text-2xl font-bold">{route.category}</h2>
+                    <p className="text-sm text-gray-500 mt-1">{route.note}</p>
                   </div>
                   <div className="divide-y divide-gray-200">
                     {route.journeys.map((journey, jIndex) => (
@@ -138,6 +162,7 @@ export default function Pricing() {
                             <span>{journey.time}</span>
                           </div>
                           <div className="text-right md:text-left">
+                            <p className="text-sm text-gray-500 mb-1">from</p>
                             <motion.p
                               className="text-3xl font-bold text-yellow-400"
                               whileHover={{ scale: 1.1 }}
@@ -145,7 +170,6 @@ export default function Pricing() {
                             >
                               {journey.price}
                             </motion.p>
-                            <p className="text-sm text-gray-500">estimated</p>
                           </div>
                         </div>
                       </motion.div>
@@ -155,24 +179,7 @@ export default function Pricing() {
               ))}
             </div>
 
-            <AnimatedCard delay={0.5} className="mt-12 bg-yellow-50 border-2 border-yellow-400 p-8" hoverEffect={false}>
-              <div className="flex items-start space-x-4">
-                <motion.div whileHover={{ scale: 1.15, rotate: 360 }} transition={{ duration: 0.6 }}>
-                  <GraduationCap className="h-8 w-8 text-yellow-600 flex-shrink-0 mt-1" />
-                </motion.div>
-                <div>
-                  <h3 className="text-2xl font-bold mb-3">Student Discount</h3>
-                  <p className="text-gray-700 text-lg mb-2">
-                    Students receive <strong>10% off these estimated fares</strong> with valid student ID.
-                  </p>
-                  <AnimatedLink to="/student-discount" className="text-yellow-600 font-semibold hover:text-yellow-700">
-                    Learn more about student discounts →
-                  </AnimatedLink>
-                </div>
-              </div>
-            </AnimatedCard>
-
-            <AnimatedCard delay={0.6} className="mt-12 bg-gray-50 p-8 border border-gray-100" hoverEffect={false}>
+            <AnimatedCard delay={0.5} className="mt-12 bg-gray-50 p-8 border border-gray-100" hoverEffect={false}>
               <h3 className="text-2xl font-bold mb-6 text-center">Pricing Information</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <motion.div

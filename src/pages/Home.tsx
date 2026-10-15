@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Phone, MessageCircle, Clock, Shield, MapPin, GraduationCap, Plane, Award, Star, Users, Luggage } from 'lucide-react';
+import { Phone, MessageCircle, Clock, Shield, MapPin, Plane, Award, Star, Users, Luggage } from 'lucide-react';
 import AnimatedSection from '../components/AnimatedSection';
 import AnimatedButton from '../components/AnimatedButton';
 import AnimatedCard from '../components/AnimatedCard';
@@ -28,11 +28,6 @@ export default function Home() {
       icon: MapPin,
       title: 'Long-Distance Travel',
       description: 'Comfortable journeys across Scotland with experienced drivers'
-    },
-    {
-      icon: GraduationCap,
-      title: 'Student Discount',
-      description: 'Save 10% on all journeys with valid student ID'
     }
   ];
 
@@ -47,9 +42,9 @@ export default function Home() {
     <div>
       <SEO
         title="St Andrews Taxi | Airport Transfers Edinburgh & Glasgow | Drive Taxi"
-        description="Professional taxi service in St Andrews. Reliable airport transfers to Edinburgh, Glasgow & Dundee. 24/7 service, student discounts, advance booking. Call 07470 856699"
+        description="Professional taxi service in St Andrews. Reliable airport transfers to Edinburgh, Glasgow & Dundee. 24/7 service, advance booking. Call 07470 856699"
         canonical="https://drivetaxi.co.uk"
-        keywords="St Andrews taxi, airport transfer Edinburgh, Glasgow airport taxi, Dundee taxi, Fife taxi service, student taxi discount"
+        keywords="St Andrews taxi, airport transfer Edinburgh, Glasgow airport taxi, Dundee taxi, Fife taxi service"
       />
       <section className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white py-16 md:py-24 overflow-hidden">
         <AnimatedBackground3D />
@@ -106,7 +101,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.4 }}
               >
-                Edinburgh • Glasgow • Dundee Airports • Early Morning Specialists • Student Discounts
+                Edinburgh • Glasgow • Dundee Airports • Early Morning Specialists
               </motion.p>
 
               <motion.div
@@ -398,67 +393,6 @@ export default function Home() {
               <ErrorBoundary>
                 <GoogleReviews />
               </ErrorBoundary>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      <section className="py-16 bg-yellow-400 relative overflow-hidden">
-        <motion.div
-          className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/30 rounded-full blur-3xl"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-500/30 rounded-full blur-3xl"
-          animate={{
-            x: [0, -50, 0],
-            y: [0, 30, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <AnimatedSection>
-            <div className="max-w-4xl mx-auto text-center">
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: [0, -10, 10, -10, 0] }}
-                className="inline-block mb-4"
-                animate={{
-                  y: [0, -10, 0],
-                }}
-                transition={{
-                  y: {
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'easeInOut'
-                  }
-                }}
-              >
-                <GraduationCap className="h-16 w-16 text-black mx-auto" />
-              </motion.div>
-              <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
-                Students Save 10% on All Journeys
-              </h2>
-              <p className="text-xl text-black/80 mb-6">
-                Perfect for airport transfers, term travel, and trips home
-              </p>
-              <AnimatedButton to="/student-discount" variant="secondary">
-                Learn More About Student Discounts
-              </AnimatedButton>
             </div>
           </AnimatedSection>
         </div>

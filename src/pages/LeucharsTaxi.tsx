@@ -16,9 +16,14 @@ export default function LeucharsTaxi() {
   ];
 
   const destinations = [
-    { name: 'St Andrews', price: '£15', time: '10 mins' },
+    { name: 'St Andrews', price: '£16', time: '10 mins' },
     { name: 'Dundee', price: '£35', time: '20 mins' },
-    { name: 'Edinburgh Airport', price: '£110', time: '75 mins' },
+    { name: 'Cupar', price: '£30', time: '25 mins' },
+    { name: 'Dundee Airport', price: '£40', time: '25 mins' },
+    { name: 'Kingsbarns', price: '£40', time: '25 mins' },
+    { name: 'Anstruther', price: '£50', time: '30 mins' },
+    { name: 'Crail', price: '£50', time: '30 mins' },
+    { name: 'Edinburgh Airport', price: '£135', time: '75 mins' },
     { name: 'Glasgow Airport', price: '£180', time: '110 mins' },
   ];
 
@@ -29,7 +34,7 @@ export default function LeucharsTaxi() {
     },
     {
       q: 'How much is a taxi from Leuchars to St Andrews?',
-      a: 'A taxi from Leuchars Station to St Andrews town centre is £15. We meet you at the station with a name board.'
+      a: 'A taxi from Leuchars Station to St Andrews town centre is £16. We meet you at the station with a name board.'
     },
     {
       q: 'Do you meet trains from London?',
@@ -40,8 +45,8 @@ export default function LeucharsTaxi() {
   return (
     <div>
       <SEO
-        title="Leuchars Station Taxi | St Andrews Train Transfer | £15"
-        description="Taxi from Leuchars Station to St Andrews £15, 10 minutes. We meet all trains, help with luggage. Book: 07470 856699"
+        title="Leuchars Station Taxi | St Andrews Train Transfer | £16"
+        description="Taxi from Leuchars Station to St Andrews £16, 10 minutes. We meet all trains, help with luggage. Book: 07470 856699"
         canonical="https://drivetaxi.co.uk/leuchars-taxi"
         keywords="Leuchars taxi, Leuchars station transfer, St Andrews train station, Leuchars to St Andrews, train station taxi Fife"
       />
@@ -71,7 +76,7 @@ export default function LeucharsTaxi() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              We meet every train. Just £15 to St Andrews. Train monitored for delays.
+              We meet every train. Just £16 to St Andrews. Train monitored for delays.
             </motion.p>
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center"

@@ -24,11 +24,6 @@ const faqData: FAQItem[] = [
     answer: 'We accept cash, card payments in the vehicle, and bank transfers. For corporate accounts, we offer invoice payment terms. Please let us know your preferred payment method when booking.'
   },
   {
-    category: 'Pricing & Payment',
-    question: 'Do you offer student discounts?',
-    answer: 'Yes! Students with valid ID receive 10% off our standard fares. Just mention you\'re a student when booking and show your student ID to the driver.'
-  },
-  {
     category: 'Airport Transfers',
     question: 'What happens if my flight is delayed?',
     answer: 'We monitor flight arrivals in real-time. If your flight is delayed, we\'ll adjust your pickup time accordingly at no extra charge for delays up to 1 hour. For longer delays, please contact us as soon as possible.'
@@ -88,7 +83,7 @@ export default function FAQ() {
     <div>
       <SEO
         title="Taxi FAQ St Andrews | Airport Transfer Questions | Drive Taxi"
-        description="Frequently asked questions about St Andrews taxi service. Airport transfers, booking, pricing, student discounts & more. Call 07470 856699 for enquiries."
+        description="Frequently asked questions about St Andrews taxi service. Airport transfers, booking, pricing & more. Call 07470 856699 for enquiries."
         canonical="https://drivetaxi.co.uk/faq"
         keywords="taxi FAQ St Andrews, airport transfer questions, taxi booking help, St Andrews taxi information"
       />

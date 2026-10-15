@@ -33,7 +33,6 @@ export default function Book() {
     flightNumber: '',
     passengers: searchParams.get('passengers') || '1',
     luggage: searchParams.get('luggage') || '1',
-    isStudent: searchParams.get('student') === 'true',
     notes: '',
   });
 
@@ -157,7 +156,6 @@ export default function Book() {
         flight_number: formData.flightNumber || null,
         passengers: parseInt(formData.passengers),
         luggage: parseInt(formData.luggage),
-        is_student: formData.isStudent,
         notes: formData.notes || null,
         status: 'pending',
       }).abortSignal(insertTimeout.signal).then(result => {
@@ -182,7 +180,6 @@ export default function Book() {
           flightNumber: formData.flightNumber,
           passengers: parseInt(formData.passengers),
           luggage: parseInt(formData.luggage),
-          isStudent: formData.isStudent,
           notes: formData.notes,
         };
 
@@ -277,7 +274,6 @@ export default function Book() {
         flightNumber: '',
         passengers: '1',
         luggage: '1',
-        isStudent: false,
         notes: '',
       });
     } catch (error) {
@@ -292,7 +288,7 @@ export default function Book() {
     <div>
       <SEO
         title="Book a Taxi St Andrews | Airport Transfer Quote | Drive Taxi"
-        description="Book your taxi online. St Andrews airport transfers, local journeys & long-distance travel. Instant quote, 24/7 service, student discounts. Call 07470 856699"
+        description="Book your taxi online. St Andrews airport transfers, local journeys & long-distance travel. Instant quote, 24/7 service. Call 07470 856699"
         canonical="https://drivetaxi.co.uk/book"
         keywords="book taxi St Andrews, taxi quote, airport transfer booking, St Andrews taxi online"
       />
@@ -647,31 +643,6 @@ export default function Book() {
                         </select>
                       </div>
                     </div>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.7 }}
-                  >
-                    <label htmlFor="isStudent" className="flex items-center space-x-3 cursor-pointer group">
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          id="isStudent"
-                          name="isStudent"
-                          checked={formData.isStudent}
-                          onChange={handleChange}
-                          className="peer sr-only"
-                        />
-                        <div className={`w-6 h-6 border-2 rounded transition-all peer-focus:ring-2 peer-focus:ring-yellow-400 peer-focus:ring-offset-2 ${formData.isStudent ? 'bg-yellow-400 border-yellow-400' : 'border-gray-300 group-hover:border-yellow-400'}`}>
-                          {formData.isStudent && (
-                            <CheckCircle className="h-5 w-5 text-black" />
-                          )}
-                        </div>
-                      </div>
-                      <span className="text-sm font-semibold">I am a student (10% discount)</span>
-                    </label>
                   </motion.div>
 
                   <motion.div

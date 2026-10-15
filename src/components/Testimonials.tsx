@@ -26,7 +26,7 @@ const testimonials: Testimonial[] = [
   {
     name: 'James K.',
     role: 'Business Traveler',
-    text: 'Best taxi service in St Andrews. Reliable, professional, and great prices. The student discount is a real bonus!',
+    text: 'Best taxi service in St Andrews. Reliable, professional, and great prices. Would definitely recommend to anyone.',
     rating: 5
   },
   {

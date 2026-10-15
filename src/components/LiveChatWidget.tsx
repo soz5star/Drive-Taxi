@@ -168,14 +168,6 @@ export default function LiveChatWidget() {
                     >
                       Urgent booking
                     </a>
-                    <a
-                      href={`https://wa.me/447470856699?text=${encodeURIComponent("Hi! Do you offer student discounts?")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs bg-white border border-gray-200 hover:border-green-400 hover:text-green-600 px-3 py-1.5 rounded-full transition-colors"
-                    >
-                      Student discount
-                    </a>
                   </div>
                 </div>
               </div>

@@ -17,7 +17,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Lazy load non-critical pages
 const AirportTransfers = lazy(() => import('./pages/AirportTransfers'));
 const Pricing = lazy(() => import('./pages/Pricing'));
-const StudentDiscount = lazy(() => import('./pages/StudentDiscount'));
 const Book = lazy(() => import('./pages/Book'));
 const Contact = lazy(() => import('./pages/Contact'));
 const FAQ = lazy(() => import('./pages/FAQ'));
@@ -65,7 +64,6 @@ function AnimatedRoutes() {
         <Route path="/" element={<RouteView><Home /></RouteView>} />
         <Route path="/airport-transfers" element={<RouteView><AirportTransfers /></RouteView>} />
         <Route path="/pricing" element={<RouteView><Pricing /></RouteView>} />
-        <Route path="/student-discount" element={<RouteView><StudentDiscount /></RouteView>} />
         <Route path="/book" element={<RouteView><Book /></RouteView>} />
         <Route path="/contact" element={<RouteView><Contact /></RouteView>} />
         <Route path="/faq" element={<RouteView><FAQ /></RouteView>} />

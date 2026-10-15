@@ -55,7 +55,6 @@ export default function Footer() {
     { name: 'Book Now', path: '/book' },
     { name: 'Pricing', path: '/pricing' },
     { name: 'Airport Transfers', path: '/airport-transfers' },
-    { name: 'Student Discount', path: '/student-discount' },
     { name: 'Contact', path: '/contact' }
   ];
 
@@ -120,14 +119,6 @@ export default function Footer() {
             <p className="text-gray-400 text-sm mb-4 leading-relaxed">
               Airport Transfers & Taxi Services serving St Andrews, Fife, and across Scotland.
             </p>
-            <motion.div
-              className="inline-block bg-yellow-400/10 border border-yellow-400/30 rounded-lg px-4 py-2"
-              whileHover={{ scale: 1.05, borderColor: 'rgba(250, 204, 21, 0.6)' }}
-            >
-              <p className="text-yellow-400 font-semibold text-sm">
-                10% Student Discount Available
-              </p>
-            </motion.div>
             <p className="text-gray-500 text-xs mt-4">
               Pre-Booked • Reliable • Professional
             </p>

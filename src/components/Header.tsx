@@ -44,7 +44,6 @@ export default function Header() {
     { name: 'Home', path: '/' },
     { name: 'Airport Transfers', path: '/airport-transfers' },
     { name: 'Pricing', path: '/pricing' },
-    { name: 'Student Discount', path: '/student-discount' },
     { name: 'FAQ', path: '/faq' },
     { name: 'Book Now', path: '/book' },
     { name: 'Contact', path: '/contact' },
